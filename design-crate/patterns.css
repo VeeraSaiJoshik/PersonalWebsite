@@ -1,0 +1,42 @@
+/* Import after tokens.css. Put decoration in an aria-hidden="true" element.
+   Pattern files contain original geometry, not Sarvam logos or downloaded artwork. */
+.cy-pattern {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+}
+.cy-pattern--dawn { background-image: url("./patterns/gateway-dawn.svg"); }
+.cy-pattern--indigo { background-image: url("./patterns/gateway-indigo.svg"); }
+.cy-pattern--outline { background-image: url("./patterns/gateway-outline.svg"); }
+.cy-pattern--arch { background-image: url("./patterns/arch-frame.svg"); }
+.cy-pattern--jali {
+  background-image: url("./patterns/jali-tile.svg");
+  background-size: var(--cy-tile-size, 88px);
+  background-repeat: repeat;
+  opacity: var(--cy-pattern-opacity, .07);
+}
+.cy-pattern--divider {
+  background-image: url("./patterns/divider.svg");
+  height: 40px;
+  opacity: .55;
+}
+.cy-pattern-panel { position: relative; isolation: isolate; overflow: hidden; }
+.cy-pattern-panel > .cy-pattern {
+  position: absolute;
+  z-index: -1;
+  right: var(--cy-pattern-right, -12%);
+  bottom: var(--cy-pattern-bottom, -38%);
+  width: var(--cy-pattern-size, 62%);
+  aspect-ratio: 1;
+  opacity: var(--cy-pattern-opacity, .7);
+}
+/* Editorial entrance: apply once when meaningful content appears. */
+@keyframes cy-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cy-enter { animation: cy-enter 320ms var(--cy-ease) both; }
+@media (prefers-reduced-motion: reduce) {
+  .cy-enter { animation: none; }
+}

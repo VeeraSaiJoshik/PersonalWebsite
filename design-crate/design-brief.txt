@@ -1,0 +1,131 @@
+COURTYARD — DESIGN FOUNDATION v1
+For a personal website and its companion app.
+
+INTENT
+Build a calm, contemporary place for a person's work, writing, and ideas. Pair
+editorial typography and generous empty space with architectural geometry and
+small moments of luminous color. Indian references enter through repeated curves,
+scalloped openings, nested forms, and the relationship between light and space.
+Treat this as one personal interpretation of Indian minimalism, not a universal
+description of Indian design.
+
+REFERENCE AND ADAPTATION
+Reference: https://www.sarvam.ai/products/doc-agents
+Reference: https://www.sarvam.ai/brand
+The product page uses Season Mix headings, Matter body copy, a near-white
+#FCFCFC main surface, #1F1F1F headings, and #666666 body text (observed 2026-10-25).
+The brand page explains gateway forms, repeated-circle construction, and a
+blue-to-orange spectrum; its artwork shows layered scallops and edge crops.
+Courtyard adapts those ideas into original SVG geometry, a warmer background,
+open-source typefaces, and a smaller set of roles suitable for a personal app.
+The proposed colors below are Courtyard values, not official Sarvam brand codes.
+
+THEORY
+1. Space is the structure. Keep a clear central reading area. Let margins and
+   typography do most of the grouping. Put decoration in the surrounding space.
+2. Repeat a construction rule. Use one family of nested curved forms, then vary
+   scale, crop, and color. Repetition makes different screens feel related.
+3. Separate expression from reading. Large color fields belong to cover art and
+   introductions. Reading, navigation, forms, and tables use quiet solid surfaces.
+4. Make the personal visible. Use actual projects, honest descriptions, natural
+   photographs, and language connected to the person. Avoid ornamental script
+   as a substitute for content; add multilingual text only when meaningful.
+5. Assign every accent a job. Indigo identifies links and focus. Clay marks an
+   editorial highlight. Periwinkle and orange belong to illustration and gradients.
+
+PALETTE
+Paper       #F8F7F4  Default page background.
+White       #FFFDF9  Raised surfaces, cards, and reading panels.
+Sand        #E7E2D8  Quiet inset surfaces and small background distinctions.
+Ink         #252721  Primary text and primary actions.
+Stone       #686B63  Secondary text; readable on both light surfaces.
+Indigo      #405A88  Links, focus rings, and active navigation.
+Clay        #AE563E  Small editorial accents; usable for text on the light base.
+Periwinkle  #9CAAF0  Cool illustration color; use dark text over solid fills.
+Mist        #DDE6F2  Pale cool field for project art.
+Marigold    #E8BC78  Warm illustration color; use dark text over solid fills.
+Orange      #EA873D  Luminous warm endpoint in artwork, not a small-text color.
+Border      #D8D6CD  Decorative separators, not the sole boundary of a control.
+Control     #84877E  Input/control boundaries that must remain visible.
+
+Start with roughly 80% quiet surface, 15% text and structure, 5% expressive color.
+This is a visual composition guide, not a measured pixel requirement. Dedicated
+project covers may use more color; surrounding navigation should stay calm.
+Dawn gradient: 160deg, #DDE6F2 0%, #9CAAF0 35%, #EBC6B2 70%, #EA873D 100%.
+Keep text on a solid surface beside or above complex gradient art.
+
+PATTERN LIBRARY AND PLACEMENT
+gateway-dawn.svg: warm/cool nested scallops; hero art or a single project cover.
+gateway-indigo.svg: cool nested scallops; onboarding or a considered empty state.
+gateway-outline.svg: thin contour version; a quiet background or section marker.
+arch-frame.svg: repeated architectural openings; portrait or project framing.
+jali-tile.svg: seamless circle lattice; a narrow side rail or footer at 4–8% opacity.
+divider.svg: mirrored curved ornament; one section transition, about 120–180px wide.
+
+The geometry is original, drawn for this kit. Sarvam's wordmark, logomark, and
+downloaded brand illustrations are not included in the reusable assets.
+
+Hero: one dominant motif, 280–480px on desktop; keep it outside the text measure.
+Card: crop 35–55% of a motif at an outer edge; reserve the opposite side for copy.
+App shell: one restrained outline or tiled accent in the sidebar/footer; keep
+navigation labels, inputs, and tables on an unpatterned surface.
+Empty state: one static motif, 72–112px, followed by a useful explanation and action.
+Reading view: plain surface; optional small divider after the article.
+Small screen: move hero art below copy; reduce the motif to 200–280px and remove
+background patterns from dense content. Do not shrink body text to fit.
+Use one pattern family per surface. Avoid patterns behind paragraphs, competing
+motifs on every card, constant spinning, and decorative treatment of status colors.
+
+TYPE
+Display: Instrument Serif Regular; italic is an occasional emphasis, not a default.
+Body and controls: DM Sans, 400–500; 600 only when hierarchy requires it.
+Metadata: system monospace, used sparingly for dates, indices, and token labels.
+Display: 56–112px responsive, line height .98–1.05, tracking about -.025em.
+Section heading: 40–60px, line height 1.08.
+Body: 17–18px, line height 1.65, maximum reading measure about 60 characters.
+UI: 14–16px; labels 11px uppercase with .12em spacing, never for long text.
+Bundled typefaces use SIL Open Font License; license texts are in fonts/.
+If adding an Indian script, select and verify a font for that script separately.
+
+LAYOUT AND COMPONENTS
+Page width: up to 1216px. Reading width: up to 640px.
+Spacing: 4, 8, 12, 16, 24, 32, 48, 64, 96px.
+Desktop sections: 96px apart. Mobile sections: 56px apart.
+Cards: 24px radius, 24–32px padding, thin border; no default heavy shadow.
+Buttons: ink fill with paper text, pill shape, 44px minimum height.
+Secondary action: transparent or pale surface, visible outline, dark text.
+Text links: indigo and underlined, with a visible focus ring.
+Cards holding related content may share a container; don't box every paragraph.
+Personal-site order: introduction, selected work, a small writing index, about,
+contact. App screens carry the same typography, tokens, and pattern hierarchy.
+
+MOTION AND ACCESSIBILITY
+The landing-page background adds a slow WebGL wave to this same pattern system.
+Its colors are #DDE6F2, #9CAAF0, #EBC6B2, and #EA873D. Use the shared brandWave
+preset in lib/brand.ts so later pages inherit the same material. Noise frequency
+is [0.00012, 0.00024], global speed 0.000004, deformation amplitude 105, flow 2.2,
+and static grain 0.025. The grain does not animate. Broad color movement belongs
+behind a hero or cover; controls, tables, and articles keep a stable background.
+The component renders a still frame for reduced motion, pauses off screen and
+in hidden tabs, and uses a matching CSS gradient if WebGL is unavailable.
+
+Hover/focus feedback: 180ms. Optional first entrance: 320ms, fade plus 6px rise.
+Animate a motif only to reflect a meaningful change. Honor reduced motion.
+Controls: at least 44 x 44px. Focus: visible 2px ring with 4px offset.
+Light text pairs on Paper: Ink 14.09:1, Stone 5.06:1, Indigo 6.46:1, Clay 4.67:1.
+These four pairs also exceed 4.5:1 on White. Use semantic tokens in dark mode;
+their text pairs exceed 4.5:1 on both supplied dark surfaces. This verifies these
+specific pairs, not every possible combination or whole-site conformance.
+Expressive colors are decorative, not error/success/status semantics.
+Decorative images use empty alt; decorative containers use aria-hidden="true".
+
+USING THE KIT
+Open index.html directly to review the theory, palette, pattern lab, and examples.
+Import tokens.css, then patterns.css into the future app. Copy fonts/ and patterns/
+beside those CSS files, or adjust their relative URLs for your build system.
+Use the semantic --cy-* variables in UI components, rather than raw palette values.
+Set data-theme="dark" on the document root for evening mode; default is light.
+The SVGs are standalone editable assets; palette.svg is a shareable color board.
+The standalone design-crate/index.html needs no build step or remote assets.
+The parent PersonalWebsite folder contains the React landing page and wave demo;
+run npm install and npm run dev there. See its README.md for integration details.

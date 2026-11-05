@@ -1,0 +1,163 @@
+/* Courtyard · proposed personal design system, inspired by Sarvam.
+   Keep fonts/ beside this file. Use data-theme="dark" on the root for evening mode. */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("./fonts/InstrumentSerif-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("./fonts/InstrumentSerif-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("./fonts/DMSans-Variable.ttf") format("truetype");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tiro Devanagari Hindi";
+  src: url("./fonts/TiroDevanagariHindi-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tiro Telugu";
+  src: url("./fonts/TiroTelugu-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Samarkan";
+  src: url("./fonts/Samarkan-Normal.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Kalam";
+  src: url("./fonts/Kalam-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Anek Latin";
+  src: url("./fonts/AnekLatin-Variable.ttf") format("truetype");
+  font-weight: 100 800;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Eczar";
+  src: url("./fonts/Eczar-Variable.ttf") format("truetype");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  /* Raw palette: these stay fixed between themes. */
+  --cy-paper: #F8F7F4;
+  --cy-white: #FFFDF9;
+  --cy-sand: #E7E2D8;
+  --cy-ink: #252721;
+  --cy-stone: #686B63;
+  --cy-indigo: #405A88;
+  --cy-clay: #AE563E;
+  --cy-periwinkle: #9CAAF0;
+  --cy-mist: #DDE6F2;
+  --cy-marigold: #E8BC78;
+  --cy-orange: #EA873D;
+
+  /* Semantic roles: use these in app components. */
+  --cy-bg: var(--cy-paper);
+  --cy-surface: var(--cy-white);
+  --cy-surface-soft: #F0EEE8;
+  --cy-text: var(--cy-ink);
+  --cy-text-muted: var(--cy-stone);
+  --cy-link: var(--cy-indigo);
+  --cy-accent: var(--cy-clay);
+  --cy-border: #D8D6CD;
+  --cy-control-border: #84877E;
+  --cy-action: var(--cy-ink);
+  --cy-action-text: var(--cy-white);
+  --cy-focus: var(--cy-indigo);
+
+  --cy-font-display: "Instrument Serif", Georgia, serif;
+  --cy-font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --cy-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --cy-font-devanagari: "Tiro Devanagari Hindi", "Noto Serif Devanagari", serif;
+  --cy-font-telugu: "Tiro Telugu", "Noto Serif Telugu", serif;
+  --cy-font-greeting: "Samarkan", "Instrument Serif", serif;
+  --cy-font-hand: "Kalam", cursive;
+  --cy-font-name: "Eczar", Georgia, serif;
+  --cy-font-humanist: "Anek Latin", sans-serif;
+  --cy-text-display: clamp(3.5rem, 7.5vw, 7rem);
+  --cy-text-heading: clamp(2.5rem, 4vw, 3.75rem);
+  --cy-text-subheading: 1.5rem;
+  --cy-text-body: 1.0625rem;
+  --cy-text-small: .875rem;
+  --cy-text-label: .6875rem;
+  --cy-leading-display: .98;
+  --cy-leading-heading: 1.08;
+  --cy-leading-body: 1.65;
+
+  --cy-space-1: .25rem;
+  --cy-space-2: .5rem;
+  --cy-space-3: .75rem;
+  --cy-space-4: 1rem;
+  --cy-space-6: 1.5rem;
+  --cy-space-8: 2rem;
+  --cy-space-12: 3rem;
+  --cy-space-16: 4rem;
+  --cy-space-24: 6rem;
+  --cy-section-space: clamp(3.5rem, 7vw, 6rem);
+  --cy-page-gutter: clamp(1.25rem, 4.5vw, 4.5rem);
+  --cy-page-width: 76rem;
+  --cy-reading-width: 40rem;
+  --cy-radius-small: .5rem;
+  --cy-radius-card: 1.5rem;
+  --cy-radius-pill: 999px;
+  --cy-touch-target: 2.75rem;
+  --cy-duration: 180ms;
+  --cy-ease: cubic-bezier(.2, .7, .3, 1);
+  --cy-gradient-dawn: linear-gradient(160deg, #DDE6F2 0%, #9CAAF0 35%, #EBC6B2 70%, #EA873D 100%);
+  --cy-gradient-indigo: linear-gradient(160deg, #EDF0FC 0%, #AAB8F1 48%, #5F73BC 100%);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --cy-bg: #20231F;
+  --cy-surface: #2B2E28;
+  --cy-surface-soft: #30352E;
+  --cy-text: #F4F1E9;
+  --cy-text-muted: #B6B9AF;
+  --cy-link: #B1C6ED;
+  --cy-accent: #E6A48C;
+  --cy-border: #474C42;
+  --cy-control-border: #858D7D;
+  --cy-action: #F4F1E9;
+  --cy-action-text: #20231F;
+  --cy-focus: #B1C6ED;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --cy-duration: 0ms; }
+}
