@@ -144,7 +144,11 @@ export const projects: Project[] = [
     name: "Restaurant floor engine",
     home: "Shire Intelligence",
     summary: "A computer vision state engine and real-time sync engine that reads a restaurant's CCTV footage and automates how the floor runs.",
-    points: ["Automates floor management, server routing, and kitchen optimization.", "Deployed in 7 restaurants."],
+    stats: [
+      { value: "7", label: "restaurants", count: { to: 7 } },
+      { value: "$32,000", label: "in MRR", count: { to: 32000, prefix: "$", separator: "," } },
+    ],
+    points: ["Automates floor management, server routing, and kitchen optimization."],
     tools: ["TypeScript", "Node.js", "OpenCV", "Supabase"],
   },
   {
@@ -218,22 +222,25 @@ export const about = {
   honors: [
     {
       title: "YC x Anthropic Hackathon Finalist",
+      sticker: { lines: ["YC x Anthropic", "Hackathon", "Finalist"], stock: "#c9663f", ink: "#fff4e0" },
       when: "January 2026",
       note: "Top 25 of 1,000 applicants from around the world.",
     },
     {
       title: "Samsung Solve for Tomorrow National Champion",
+      sticker: { lines: ["Solve for", "Tomorrow", "National Champ"], stock: "#29435b", ink: "#f6efdf" },
       when: "July 2025",
       note: "Selected as a Samsung Student Ambassador for the Winter Olympics. Invited to present at Samsung's HQ and the US Capitol.",
     },
     {
       title: "International Science Fair, 3rd Grand Award",
+      sticker: { lines: ["Int'l Science", "Fair", "3rd Grand Award"], stock: "#e2b04a", ink: "#3a2c14" },
       when: "May 2025",
       note: "Translational Medical Sciences. Awarded a $2,000 grant to present in Columbus, Ohio.",
     },
   ],
   languages: ["C", "C++", "Java", "JavaScript", "TypeScript", "Python", "Dart", "Go", "Rust"],
-  frameworks: ["Flutter", "React", "Next.js", "Vercel", "FastAPI", "OpenCV", "TensorFlow", "Hugging Face", "AWS", "GCP", "Docker", "Kubernetes"],
+  frameworks: ["Flutter", "React", "Next.js", "Vercel", "FastAPI", "OpenCV", "TensorFlow", "HuggingFace", "AWS", "GCP", "Docker", "Kubernetes"],
 };
 
 /** Add records here, e.g. { title: "Album", by: "Artist", note: "Why it stays on" }. */
@@ -242,25 +249,33 @@ export const records: RecordEntry[] = [];
 /** Add people, books, or ideas here, e.g. { name: "Who or what", note: "Why it stuck" }. */
 export const pins: Pin[] = [];
 
+/** Notes for the Inspiration shredder. They come back, so it never runs dry. */
+export const placeholders = [
+  { id: 1, text: "An inspiring quote goes here" },
+  { id: 2, text: "A book I'll claim to have finished" },
+  { id: 3, text: "Something profound about failure" },
+  { id: 4, text: "Placeholder, honestly" },
+];
+
 export const chapterCopy = {
   music: {
     headline: "What's on the turntable.",
-    intro: records.length ? "A few that stay on repeat." : "The crate is still being packed. Records land here soon.",
+    intro: "The crate's still being packed, so play something in the meantime. Press the keys, run a finger across them, or use A to K.",
     note: records.length ? "side A" : "side A, coming up",
   },
   projects: {
     headline: "Things I've built.",
-    intro: "Six builds, from restaurant floors to oral cancer research. Scroll and the pile grows.",
+    intro: "Six builds, from restaurant floors to oral cancer research. Grab the top sheet and throw it.",
     note: "out of the workshop",
   },
   experience: {
     headline: "Where the hours went.",
-    intro: "A founding engineer role, a fund, an internship, a research lab, and two things I started alongside school.",
+    intro: "Six cards, dealt face up. Flip one for the story.",
     note: "the ledger so far",
   },
   inspiration: {
     headline: "Pinned above the desk.",
-    intro: pins.length ? "The things that stuck." : "The board is up. The pins are on their way.",
+    intro: pins.length ? "The things that stuck." : "Nothing's pinned yet, only placeholders. Feed them to the shredder.",
     note: pins.length ? "still adding" : "more pins soon",
   },
   "about-me": {

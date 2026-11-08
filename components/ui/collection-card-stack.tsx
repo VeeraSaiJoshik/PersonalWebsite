@@ -46,6 +46,7 @@ const paperFallDuration = 1250;
 const cardCrumpleDuration = 720;
 const paperRiseDuration = 720;
 const paperUnfoldDuration = 1050;
+const leaveDuration = 260;
 type PaperPose = { fold: number; x: number; y: number; tilt: number; scale: number; rotation: number };
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
 const smoothProgress = (value: number) => {
@@ -262,20 +263,29 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
       // Finish a picked-up card's drop before returning it if Escape interrupts.
       if (stage === "card-crumpling") return;
       if (!surface) { returnCard(); return; }
-      fall = {
-        elapsed: 0,
-        from: { ...pagePose },
-        veil: Number(veil.style.opacity) || 0,
-        targetX: launch.x,
-        targetY: launch.y,
-        scale: launch.scale,
-        direction: launch.direction,
+      const crumple = () => {
+        if (abort.signal.aborted) return;
+        dialog.dataset.phase = "closing";
+        fall = {
+          elapsed: 0,
+          from: { ...pagePose },
+          veil: Number(veil.style.opacity) || 0,
+          targetX: launch.x,
+          targetY: launch.y,
+          scale: launch.scale,
+          direction: launch.direction,
+        };
+        renderPage(pagePose);
+        page.style.opacity = "0";
+        canvas.style.visibility = "visible";
+        cancelAnimationFrame(frame); previous = 0;
+        frame = requestAnimationFrame(render);
       };
-      renderPage(pagePose);
-      page.style.opacity = "0";
-      canvas.style.visibility = "visible";
-      cancelAnimationFrame(frame); previous = 0;
-      frame = requestAnimationFrame(render);
+      // The texture is the empty sheet, so sweep everything off it first.
+      if (stage === "open") {
+        dialog.dataset.phase = "leaving";
+        setTimeout(crumple, leaveDuration);
+      } else crumple();
     };
     canvas.addEventListener("webglcontextlost", contextLost);
     cardCanvas.addEventListener("webglcontextlost", contextLost);

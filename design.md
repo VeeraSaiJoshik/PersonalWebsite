@@ -75,27 +75,29 @@ Active full-bleed artwork is in `public/images/card-worlds/` as `music.webp`, `p
 
 ## Chapter pages
 
-A chapter is a paper collage, not a window. The arch from the card survives only as a plate about 190px wide in a side rail, so the text gets the page. It takes roughly 4% of a desktop viewport; the frame it replaced took about 95%. Landing card arches are unchanged.
+A chapter is a paper collage with one physical toy on it, not a formatted resume. The arch from the card survives only as a plate about 190px wide in a side rail. Landing card arches are unchanged.
 
-- **Material:** a torn sheet lies on the card stock, over a ledger scrap and a coloured under-sheet that peek out at slightly different angles. The existing rosette and gateway cutouts are tucked over its corners and can be grabbed and crumpled like the rest of the paper. They sit in the sheet's margins and are hidden below 1280px, where the margins can't hold them clear of the text.
-- **Torn edges:** `lib/paper/torn-edge.ts` builds CSS polygons with px offsets on percentage positions, so the grain holds at any size. Each piece has a pale fibre layer behind a slightly deeper tear, which is what reads as real torn paper. Text stays straight; only the paper behind a slip tilts.
-- **Content:** everything is in `lib/chapters.ts` and comes from the resume. Music and Inspiration have no source material, so they show a collage cut from their own artwork and an email prompt. Filling `records` or `pins` replaces that with real entries. Don't invent entries for them.
+- **Material:** a torn sheet lies on the card stock, over a ledger scrap and a coloured under-sheet that peek out at slightly different angles. The rosette and gateway cutouts are tucked over its corners and can be grabbed and crumpled. They are hidden below 1280px, where the margins can't hold them clear of the content.
+- **Torn edges:** `lib/paper/torn-edge.ts` builds CSS polygons with px offsets on percentage positions, so the grain holds at any size. Each piece has a pale fibre layer behind a slightly deeper tear.
+- **Content:** everything is in `lib/chapters.ts` and comes from the resume. Music and Inspiration have no source material, so their toys carry the page. Filling `records` or `pins` adds real entries alongside them. Don't invent entries.
 - **Privacy:** the phone number and resume PDF are deliberately not published.
 
-One signature per chapter, with no competing motion:
+| Chapter | The toy | Source |
+| ---------- | -------------------------------------------------------------- | -------------------- |
+| Projects | A pile of torn sheets to grab and throw across the screen. Figures count up as each sheet surfaces | React Bits Stack, Count Up |
+| Experience | Six playing cards dealt onto the sheet, flipping to the story. "Flip them all" ripples through the hand | React Bits Flip Card, `border-beam` |
+| About Me | Peelable award stickers that can go anywhere on the page, a name that swells under the cursor, a spinning stamp to fling, a toolkit that collapses into a pile you can throw, and a ticket to tear | React Bits Sticker Peel, Variable Proximity, Circular Text, Falling Text, Tear Ticket |
+| Music | A playable paper harmonium with Telugu swaras (click, glide, or A to K) and a record to fling | Web Audio, React Bits Circular Text, Elastic Slider |
+| Inspiration | A working shredder fed with joke placeholder notes, and a trail of art scraps following the cursor | React Bits Shredder, Image Trail |
+| All | Headlines fold open and crease near the cursor, paper confetti on every click, contact links are an ink blot on a magnet | React Bits Fold Text, Click Spark, Magnet, `liquid-gooey` |
 
-| Chapter | Signature | Source |
-| ----------- | --------------------------------------------------------------- | -------------------- |
-| Projects | A sticky pile: each sheet parks below the last, leaving its title showing. Sticky is off on phones and short windows | CSS |
-| Experience | A faint gold beam on the one current role; figures below the fold count up | `border-beam`, React Bits Count Up |
-| About Me | A rubber-stamp seal and a tear-off contact ticket | React Bits Circular Text, Tear Ticket |
-| All | Headlines crease near the cursor; contact links are one ink blot that pulls apart | React Bits Fold Text, `liquid-gooey` |
+**Motion:** paper has weight, so pieces overshoot and settle rather than fading in. The texture captured for the unfold is the empty sheet: chapter content mounts only once the paper is flat, then drops, slaps or slides onto it. Closing sweeps everything off in 260ms before the sheet crumples, so the page and the texture match.
 
-Metal, Image and Sticker Peel were left out because each needs its own WebGL context, and the page already runs several.
+**Landing:** hovering a card makes its neighbours lean out of the way, "I'm Jo." swells under the cursor, and clicks throw confetti.
 
-The paper texture is captured while the page is hidden, and the same texture is used for the crumple on close. So nothing above the fold animates in: Count Up only runs on figures that start off screen, and Fold Text only reacts to hover. Sections below the fold carry `data-capture="exclude"` to keep opening fast. Chapter code is a separate chunk, preloaded 1.5 seconds after load.
+**WebGL:** at most about 12 contexts are live, on About Me with its three stickers, under Chrome's limit of 16. Chapter code is a separate chunk, preloaded 1.5 seconds after load or on card hover.
 
-Keyboard users get the same content: the sheet is a focusable scroll region, the ticket stub tears on Enter or Space, and its links work whether or not it has been torn.
+**Accessibility:** the Stack takes arrow keys, Flip Cards and the Tear Ticket stub are focusable and respond to Enter or Space, the harmonium keys are buttons, and shredder notes are focusable. Sticker and toolkit content is also available as text. Reduced motion removes the entrance animations.
 
 ## Responsive behavior
 
