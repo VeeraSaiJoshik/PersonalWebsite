@@ -203,7 +203,10 @@
   from { opacity: 0; transform: translateX(-26px) rotate(-1.5deg); }
 }
 .card-dialog-root[data-phase="leaving"] .deal,
-.card-dialog-root[data-phase="leaving"] .chapter-intro {
+.card-dialog-root[data-phase="leaving"] .chapter-intro,
+.card-dialog-root[data-phase="leaving"] .chapter-section,
+.card-dialog-root[data-phase="leaving"] .crate,
+.card-dialog-root[data-phase="leaving"] .board {
   animation: deal-out 240ms cubic-bezier(0.55, 0, 0.9, 0.4) forwards;
   animation-delay: calc(var(--deal-order, 0) * 8ms);
 }
@@ -479,7 +482,7 @@
   display: flex;
   gap: clamp(3px, 0.5vw, 7px);
   height: clamp(250px, 44vh, 600px);
-  touch-action: none;
+  touch-action: pan-y;
 }
 .harmonium-key {
   position: relative;
@@ -498,7 +501,8 @@
   transform-origin: 50% 0;
   box-shadow: 0 6px 0 color-mix(in srgb, var(--key-stock) 62%, #1d1b16), 0 9px 12px #2c211240;
   transition: translate 110ms cubic-bezier(0.3, 1.8, 0.5, 1), box-shadow 110ms, filter 110ms, rotate 200ms var(--spring);
-  touch-action: none;
+  /* Up and down still scrolls the page on a phone; sideways is the glissando. */
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -690,7 +694,8 @@
   .ticket-face { padding: 12px 8px 12px 16px; }
   .ticket-stub { font-size: 17px; }
   [data-chapter="inspiration"] .sheet-column { display: block; }
-  .shred-wrap { margin: 22px auto 0; }
+  /* Notes capture touch for dragging, so leave a gutter the page can scroll by. */
+  .shred-wrap { width: calc(100% - 48px); margin: 22px 0 0; }
   .harmonium { grid-template-columns: minmax(0, 1fr); }
   .harmonium-keys { height: 280px; }
   .harmonium-key kbd { display: none; }

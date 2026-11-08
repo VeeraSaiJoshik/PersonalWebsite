@@ -104,11 +104,14 @@ export function PaperHarmonium() {
     window.addEventListener("keydown", keyDown);
     window.addEventListener("keyup", keyUp);
     window.addEventListener("pointerup", stopAll);
+    // Fires when a touch turns into a page scroll, and the note must not hang.
+    window.addEventListener("pointercancel", stopAll);
     window.addEventListener("blur", stopAll);
     return () => {
       window.removeEventListener("keydown", keyDown);
       window.removeEventListener("keyup", keyUp);
       window.removeEventListener("pointerup", stopAll);
+      window.removeEventListener("pointercancel", stopAll);
       window.removeEventListener("blur", stopAll);
       stopAll();
       void audio.current?.context.close();
