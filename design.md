@@ -59,7 +59,7 @@ Each card contains an arched window into an immersive generated world. Music has
 
 Hover or keyboard focus raises a card far enough to see its complete window. React Bits **Holo Card** adds low-intensity gold foil and a small pointer-driven tilt, preserving the colored paper, title and illustration. Foil is quiet at rest and stronger under the cursor; it stops scheduling frames after settling.
 
-Click, tap, Enter, or Space crumples the entire selected card, including its title and frame, then drops the bundle below the screen over roughly 720ms. A tightly folded page rises from that same slot to the center over 720ms, then **uncrumples from a 3D paper sheet** over roughly 1.05 seconds. Keep the page folded during its ascent; only expand it after it reaches the center. Use React Bits **Paper Crumple**’s triangulated geometry, crease simulation, normal smoothing and lighting. A texture captured from the actual page carries the illustration and text through the folds. Once flat, switch to the live DOM without fading the artwork. Closing gathers the page into a paper bundle, then tumbles it down toward the selected card’s slot over roughly 1.25 seconds. The bundle shrinks as it falls and exits below the viewport; only then does the original card scoot back up. Fade the backdrop during the fall so the landing place is visible. The placeholder stays in the window, beside the illustration on desktop and below it on portrait phones.
+Click, tap, Enter, or Space crumples the entire selected card, including its title and frame, then drops the bundle below the screen over roughly 720ms. A tightly folded page rises from that same slot to the center over 720ms, then **uncrumples from a 3D paper sheet** over roughly 1.05 seconds. Keep the page folded during its ascent; only expand it after it reaches the center. Use React Bits **Paper Crumple**’s triangulated geometry, crease simulation, normal smoothing and lighting. A texture captured from the actual page carries the illustration and text through the folds. Once flat, switch to the live DOM without fading the artwork. Closing gathers the page into a paper bundle, then tumbles it down toward the selected card’s slot over roughly 1.25 seconds. The bundle shrinks as it falls and exits below the viewport; only then does the original card scoot back up. Fade the backdrop during the fall so the landing place is visible.
 
 The entire playing card—including its title, border and image—is one draggable paper object. The toran, gateway, rosette and open chapter artwork are also grabbable. Hold for 180ms or move more than 6px to begin; an ordinary click still opens the card. Crumple while held, track the picked point, then flatten and return to the original place on release. Disable native drag previews, image dragging and text selection on these objects. Keep the base paper texture stationary. Keyboard users can hold Space on standalone artwork, or Alt+Space on a card, and use arrows to move it.
 
@@ -67,15 +67,39 @@ Use one on-demand paper renderer per active grab; precompute fold geometry in a 
 
 The **Jo ID badge is deliberately modern**: neutral white/gray card, clean DM Sans type, a black woven strap, silver hardware and one small blue accent. It uses no Indian ornamental pattern. The Lanyard physics stage spans the viewport while only the projected badge receives pointer events, letting visitors drag it anywhere without covering other controls. The strap remains anchored at the top left. Use a large badge on desktop and reduce its size on short screens so it clears the greeting. Click or Enter/Space flips it; Escape resets it. Place the theme and background-motion controls together at the top right.
 
-Adapted sources: [Paper Crumple](https://reactbits.dev/micro/paper-crumple), [Holo Card](https://reactbits.dev/components/holo-card), and [Lanyard](https://reactbits.dev/components/lanyard). Preserve source credits and `public/licenses/react-bits.md`.
+Adapted sources: [Paper Crumple](https://reactbits.dev/micro/paper-crumple), [Holo Card](https://reactbits.dev/components/holo-card), [Lanyard](https://reactbits.dev/components/lanyard), [Tear Ticket](https://reactbits.dev/micro/tear-ticket), [Fold Text](https://reactbits.dev/text-animations/fold-text), [Count Up](https://reactbits.dev/text-animations/count-up), and [Circular Text](https://reactbits.dev/text-animations/circular-text). [Border Beam](https://libraries.dev/beam.html) and [Gooey](https://libraries.dev/gooey.html) come from libraries.dev as npm packages. Preserve source credits and `public/licenses/react-bits.md`.
 
 The top ornament was generated with the built-in image tool. Its original is `design-crate/generated/top-paper-toran.png`; its exact prompt and generation mode are in `design-crate/generated/top-paper-toran-prompt.txt`. The transparent WebP is 1400px wide. It shares the stationary paper's materials and palette, and enters once with the other separate scraps.
 
 Active full-bleed artwork is in `public/images/card-worlds/` as `music.webp`, `projects.webp`, `experience.webp`, `inspiration.webp`, and `about-me.webp`. The built-in image-generation tool produced the new scenes. Original PNGs and exact prompts are in `design-crate/generated/card-worlds/`. The previous isolated cutout illustrations are retained in `design-crate/generated/cards/` and `public/images/cards/` as explorations.
 
+## Chapter pages
+
+A chapter is a paper collage, not a window. The arch from the card survives only as a plate about 190px wide in a side rail, so the text gets the page. It takes roughly 4% of a desktop viewport; the frame it replaced took about 95%. Landing card arches are unchanged.
+
+- **Material:** a torn sheet lies on the card stock, over a ledger scrap and a coloured under-sheet that peek out at slightly different angles. The existing rosette and gateway cutouts are tucked over its corners and can be grabbed and crumpled like the rest of the paper. They sit in the sheet's margins and are hidden below 1280px, where the margins can't hold them clear of the text.
+- **Torn edges:** `lib/paper/torn-edge.ts` builds CSS polygons with px offsets on percentage positions, so the grain holds at any size. Each piece has a pale fibre layer behind a slightly deeper tear, which is what reads as real torn paper. Text stays straight; only the paper behind a slip tilts.
+- **Content:** everything is in `lib/chapters.ts` and comes from the resume. Music and Inspiration have no source material, so they show a collage cut from their own artwork and an email prompt. Filling `records` or `pins` replaces that with real entries. Don't invent entries for them.
+- **Privacy:** the phone number and resume PDF are deliberately not published.
+
+One signature per chapter, with no competing motion:
+
+| Chapter | Signature | Source |
+| ----------- | --------------------------------------------------------------- | -------------------- |
+| Projects | A sticky pile: each sheet parks below the last, leaving its title showing. Sticky is off on phones and short windows | CSS |
+| Experience | A faint gold beam on the one current role; figures below the fold count up | `border-beam`, React Bits Count Up |
+| About Me | A rubber-stamp seal and a tear-off contact ticket | React Bits Circular Text, Tear Ticket |
+| All | Headlines crease near the cursor; contact links are one ink blot that pulls apart | React Bits Fold Text, `liquid-gooey` |
+
+Metal, Image and Sticker Peel were left out because each needs its own WebGL context, and the page already runs several.
+
+The paper texture is captured while the page is hidden, and the same texture is used for the crumple on close. So nothing above the fold animates in: Count Up only runs on figures that start off screen, and Fold Text only reacts to hover. Sections below the fold carry `data-capture="exclude"` to keep opening fast. Chapter code is a separate chunk, preloaded 1.5 seconds after load.
+
+Keyboard users get the same content: the sheet is a focusable scroll region, the ticket stub tears on Enter or Space, and its links work whether or not it has been torn.
+
 ## Responsive behavior
 
-Keep the page within the viewport, with no horizontal or vertical document scrolling. Adapt the greeting and card peek to the available height. Crop edge decoration more tightly on short screens. All five titles remain visible on phones; an open chapter fills the viewport, including short landscape screens. Controls occupy the top corners, leaving the card fan clear. Keep noninteractive decoration out of the accessibility tree; label grabbable artwork and the ID badge. Retain daylight/evening modes.
+Keep the page within the viewport, with no horizontal or vertical document scrolling. Adapt the greeting and card peek to the available height. Crop edge decoration more tightly on short screens. All five titles remain visible on phones; an open chapter fills the viewport, including short landscape screens. On phones the rail folds into a header row and the whole page scrolls as one. Controls occupy the top corners, leaving the card fan clear. Keep noninteractive decoration out of the accessibility tree; label grabbable artwork and the ID badge. Retain daylight/evening modes.
 
 ## References
 

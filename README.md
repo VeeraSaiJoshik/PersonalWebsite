@@ -12,11 +12,13 @@ Five tinted playing cards peek up from the bottom of a fixed, non-scrolling page
 
 Clicking a card crumples its entire face into a paper bundle and drops it below the viewport. A tightly folded page then rises from the same slot, travels to the center, and **uncrumples into the chapter** using the simulation and paper shading from [React Bits Paper Crumple](https://reactbits.dev/micro/paper-crumple). A snapshot of the real page carries its title, artwork and content through the folds, then hands off to the live accessible DOM. Closing crumples the page into a bundle that tumbles down toward its card’s slot. Once the paper falls below the viewport, the original card scoots back up. Radix keeps focus inside the chapter; Escape also works during the entrance. Reduced motion or unavailable WebGL shows the chapter directly.
 
+Each chapter is a torn paper sheet with the card's arch reduced to a small plate beside it. Experience, Projects and About Me are filled from the resume. Music and Inspiration show a collage and an email prompt until entries are added. **To change any copy, edit `lib/chapters.ts`**; add albums to `records` and people or ideas to `pins`, and those pages render them automatically. Chapter composition and the reasoning behind it are in `design.md`.
+
 Hold or drag an entire playing card, any of the three collage pieces, or the artwork inside an open chapter to crumple and move it. Release to flatten and return it to its original position. A short click still opens a card; drag gestures suppress that click and the browser’s native image/text drag preview. Standalone artwork supports holding Space/Enter and moving with arrow keys; cards use Alt+Space and arrow keys. Escape, pointer cancellation, blur and resize restore the piece. One on-demand renderer is shared between picked-up objects, and geometry is prepared in a worker.
 
 A larger, **modern Jo ID badge** hangs at the top left, with clean DM Sans typography, neutral card stock, a black strap and silver hardware. It intentionally has a different visual style from the scrapbook. The supplied [React Bits Lanyard](https://reactbits.dev/components/lanyard) uses a viewport-wide physics stage and a hit target that follows the badge, so it can be dragged anywhere without blocking the rest of the site. Click or press Enter/Space to flip it; Escape resets it. It scales down on short screens. The two small controls now sit together at the top right.
 
-React Bits source attribution is retained in the adapted files, and its license is in `public/licenses/react-bits.md`. Three.js loads in a separate chunk shared by the badge and paper interactions. If WebGL is unavailable, the original artwork, card navigation and a simple ID fallback remain visible.
+React Bits source attribution is retained in the adapted files, and its license is in `public/licenses/react-bits.md`. [border-beam](https://libraries.dev/beam.html) and [liquid-gooey](https://libraries.dev/gooey.html) are MIT-licensed npm packages from libraries.dev; Fold Text depends on GSAP, under its [standard license](https://gsap.com/standard-license). Three.js loads in a separate chunk shared by the badge and paper interactions. If WebGL is unavailable, the original artwork, card navigation and a simple ID fallback remain visible.
 
 ## Run locally
 
@@ -47,6 +49,10 @@ VITE_CACHE_DIR=node_modules/.vite-inspection npm run dev -- --port 5174
 | `components/ui/blob-cursor.jsx`    | React Bits liquid cursor with companion CSS and typed props                |
 | `components/ui/namaste-reveal.tsx` | English/Telugu greeting with pointer, touch, and keyboard support           |
 | `components/ui/collection-card-stack.tsx` | Five playing cards and accessible chapters with a paper-uncrumpling entrance |
+| `lib/chapters.ts` | All chapter copy, from the resume. Add Music and Inspiration entries here |
+| `components/ui/chapter-pages.tsx` | The chapter layout and each chapter's content, loaded as a separate chunk |
+| `lib/paper/torn-edge.ts` | Torn paper outlines as CSS polygons |
+| `src/chapters.css` | Chapter page styles |
 | `components/ui/paper-play.tsx` | Shared grab, crumple, return and native-drag suppression for artwork and whole cards |
 | `components/ui/holo-card.tsx` | Adapted React Bits holographic foil and tilt around the existing card faces |
 | `components/ui/identity-lanyard.tsx` | Modern ID design and the adapted React Bits Lanyard |
