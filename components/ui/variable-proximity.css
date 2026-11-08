@@ -1,0 +1,4 @@
+/* Upstream loads Roboto Flex from Google here. This site's fonts are local, so inherit. */
+.variable-proximity {
+  font-family: inherit;
+}
