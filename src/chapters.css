@@ -1,0 +1,513 @@
+/* Chapter pages: a torn sheet lying on the card stock, with the arch as a small plate. */
+.expanded-card {
+  --sheet: #f6eddb;
+  --sheet-fibre: #fffaf0;
+  --sheet-ink: #2f2a20;
+  --sheet-soft: #5c5444;
+  --sheet-line: color-mix(in srgb, var(--card-accent) 26%, transparent);
+  --slip: color-mix(in srgb, var(--card-stock) 30%, #fbf4e4);
+}
+[data-theme="dark"] .expanded-card {
+  --sheet: #e8ddc6;
+  --sheet-fibre: #f2e9d6;
+  --slip: color-mix(in srgb, var(--card-stock) 34%, #efe5cf);
+  background: color-mix(in srgb, var(--card-stock) 62%, #1d1b16);
+}
+
+.chapter-layout {
+  position: absolute;
+  inset: 70px 16px 16px;
+  display: grid;
+  grid-template-columns: clamp(160px, 15.5vw, 216px) minmax(0, 1fr);
+  gap: clamp(14px, 1.8vw, 28px);
+}
+
+/* Rail: the arch survives as a plate about the size of the landing card's window. */
+.chapter-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  min-height: 0;
+  padding: 10px 6px 12px 10px;
+}
+.expanded-card .chapter-arch {
+  position: relative;
+  inset: auto;
+  flex: none;
+  width: 100%;
+  max-width: 190px;
+  aspect-ratio: 4 / 5;
+  rotate: -1.5deg;
+}
+.chapter-note {
+  position: relative;
+  max-width: 100%;
+  padding: 10px 14px 9px;
+  background: var(--sheet);
+  color: var(--sheet-ink);
+  font: 400 17px/1.25 var(--cy-font-hand);
+  text-align: center;
+  rotate: 1.5deg;
+  box-shadow: 0 2px 5px #2c211226;
+}
+.chapter-note::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 54px;
+  height: 16px;
+  translate: -50% 0;
+  rotate: -4deg;
+  background: #d6b97499;
+  border-inline: 1px dashed #baa26b70;
+}
+
+/* A liquid-gooey ink blot: two links that pull apart under the pointer. */
+.ink-links { margin-top: auto; }
+.ink-links > div { display: flex; }
+.ink-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 15px;
+  border-radius: 22px;
+  color: var(--ink-paper);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ink-link:focus-visible { outline: 2px solid currentColor; outline-offset: -5px; }
+
+/* The sheet. Layers stay separate from the scroller so scrolling never repaints a filter. */
+.chapter-sheet { position: relative; min-width: 0; min-height: 0; }
+.torn {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px #2c211230);
+}
+.torn-fibre, .torn-face { position: absolute; inset: 0; display: block; }
+.torn-fibre { background: var(--torn-fibre, #fffaf0); }
+.torn-face { background: var(--torn-face, #f6eddb); }
+/* Paper mache: a ledger scrap and a coloured sheet underneath, printed cutouts on top. */
+.sheet-under { filter: none; }
+.sheet-under-ledger {
+  --torn-fibre: #f5edda;
+  rotate: -1.15deg;
+  translate: -3px 2px;
+}
+.sheet-under-ledger .torn-face {
+  inset: 1px;
+  background:
+    repeating-linear-gradient(0deg, #6a7fa02e 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, #6a7fa01f 0 1px, transparent 1px 24px),
+    #efe6d2;
+}
+.sheet-under-stock {
+  --torn-fibre: color-mix(in srgb, var(--card-stock) 50%, #fff8e8);
+  --torn-face: color-mix(in srgb, var(--card-accent) 72%, var(--card-stock));
+  rotate: 0.85deg;
+  translate: 3px 1px;
+}
+.sheet-under-stock .torn-face { inset: 1px; }
+.chapter-cutout {
+  position: absolute;
+  height: auto;
+  pointer-events: auto;
+  filter: drop-shadow(0 5px 8px #2c211238);
+}
+.cutout-rosette { width: clamp(150px, 13vw, 196px); right: -34px; top: -32px; rotate: 12deg; }
+.cutout-gateway { width: clamp(150px, 13vw, 190px); left: -46px; bottom: -40px; rotate: -8deg; }
+[data-chapter="projects"] .cutout-rosette { top: auto; right: -40px; bottom: -36px; }
+[data-chapter="music"] .cutout-gateway { display: none; }
+[data-chapter="music"] .cutout-rosette { top: auto; right: -30px; bottom: -30px; }
+[data-chapter="inspiration"] .cutout-rosette { display: none; }
+[data-chapter="inspiration"] .cutout-gateway { left: auto; right: -40px; rotate: 9deg; }
+@media (max-width: 1180px) { .chapter-cutout { display: none !important; } }
+.sheet-paper { --torn-fibre: var(--sheet-fibre); --torn-face: var(--sheet); filter: drop-shadow(-1px 4px 8px #2c211238); }
+.sheet-paper .torn-face {
+  inset: 2px;
+  background: var(--sheet) url("/images/scrapbook/scrapbook-paper.webp") center / cover;
+  background-blend-mode: soft-light;
+}
+.sheet-scroll {
+  position: absolute;
+  inset: 14px 8px 14px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--card-accent) 45%, transparent) transparent;
+  border-radius: 4px;
+  color: var(--sheet-ink);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.sheet-scroll:focus-visible { outline: 2px solid var(--card-accent); outline-offset: -2px; }
+.sheet-column {
+  max-width: 900px;
+  margin-inline: auto;
+  padding: clamp(24px, 4.5vh, 48px) clamp(20px, 3.4vw, 52px) clamp(40px, 8vh, 88px);
+}
+
+.chapter-headline {
+  color: var(--card-accent);
+  font-family: var(--cy-font-name);
+  font-size: clamp(34px, 4.4vw, 58px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+.chapter-headline .fold-text { line-height: inherit; letter-spacing: inherit; }
+.chapter-intro {
+  max-width: 58ch;
+  margin-top: 12px;
+  color: var(--sheet-soft);
+  font-size: clamp(17px, 1.5vw, 19px);
+  line-height: 1.55;
+}
+
+.chapter-section { margin-top: clamp(32px, 6vh, 56px); }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  color: var(--card-accent);
+  font: 400 24px/1.2 var(--cy-font-hand);
+}
+.section-title::after { content: ""; flex: 1; border-top: 1px dashed var(--sheet-line); }
+
+/* Experience: slips with straight text on very slightly skewed paper. */
+.slip {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 8px 24px;
+  padding: 26px 26px 26px 24px;
+}
+.slip + .slip, .slip-beam + .slip { margin-top: 12px; }
+.slip-paper { --torn-face: var(--slip); z-index: -1; rotate: var(--slip-tilt, -0.35deg); }
+.slip:nth-of-type(even) .slip-paper, .slip-beam + .slip .slip-paper { --slip-tilt: 0.4deg; }
+.slip-when {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  color: var(--card-accent);
+  font: 400 17px/1.3 var(--cy-font-hand);
+}
+.slip-where { color: var(--sheet-soft); font-size: 15px; }
+.slip-org {
+  color: var(--sheet-ink);
+  font-family: var(--cy-font-name);
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.slip-title { margin-top: 3px; color: var(--sheet-soft); font-size: 15px; }
+.slip-points { margin-top: 14px; padding-left: 16px; list-style: none; }
+.slip-points li { position: relative; }
+.slip-points li + li { margin-top: 8px; }
+.slip-points li::before {
+  content: "";
+  position: absolute;
+  top: 0.68em;
+  left: -16px;
+  width: 6px;
+  height: 6px;
+  rotate: 45deg;
+  background: color-mix(in srgb, var(--card-accent) 70%, transparent);
+}
+
+/* One current role gets a clean card and the only moving border on the page. */
+.slip-beam { border-radius: 6px; }
+.slip-featured {
+  border-radius: 6px;
+  background: color-mix(in srgb, #e6b95c 18%, #fdf8ec);
+  box-shadow: 0 1px 2px #2c211226, 0 8px 18px -10px #2c211240;
+}
+
+.figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin: 16px 0 0;
+}
+.figure { display: flex; flex-direction: column-reverse; justify-content: flex-end; max-width: 180px; }
+.figure-value {
+  display: inline-grid;
+  justify-items: start;
+  margin: 0;
+  color: var(--pile-ink, var(--card-accent));
+  font-family: var(--cy-font-name);
+  font-size: clamp(26px, 2.8vw, 34px);
+  font-weight: 500;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.figure-value > * { grid-area: 1 / 1; }
+.figure-ghost:has(+ .figure-count) { visibility: hidden; }
+.figure-label { margin-top: 3px; color: var(--sheet-soft); font-size: 14px; line-height: 1.35; }
+
+.tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; list-style: none; padding: 0; }
+.tools li {
+  padding: 2px 9px;
+  border: 1px solid var(--sheet-line);
+  border-radius: 3px;
+  color: var(--sheet-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* Projects: a pile. Each sheet parks just below the last, leaving its tab showing. */
+.pile { margin: clamp(24px, 4vh, 36px) 0 0; padding: 0; list-style: none; }
+.pile-card {
+  position: sticky;
+  top: calc(var(--i) * 56px);
+  isolation: isolate;
+  z-index: calc(var(--i) + 1);
+  margin-bottom: 18px;
+  padding: 18px 28px 30px;
+  color: var(--pile-ink);
+  --sheet-soft: color-mix(in srgb, var(--pile-ink) 82%, #000);
+  --sheet-line: color-mix(in srgb, var(--pile-ink) 30%, transparent);
+  --card-accent: var(--pile-ink);
+}
+.pile-paper { --torn-face: var(--pile-stock); z-index: -1; filter: drop-shadow(0 -2px 5px #2c211230); }
+.pile-tab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; min-height: 36px; }
+.pile-number { font: 400 18px/1.2 var(--cy-font-hand); }
+.pile-name { font-family: var(--cy-font-name); font-size: clamp(20px, 2.1vw, 26px); font-weight: 500; line-height: 1.25; }
+.pile-home { margin-left: auto; font: 400 16px/1.3 var(--cy-font-hand); }
+.pile-body { padding-top: 10px; }
+.pile-summary { max-width: 62ch; }
+
+/* About: the stamp, ledgers, and a ticket worth tearing. */
+.about-lede { display: flex; align-items: flex-start; gap: 28px; margin-top: 16px; }
+.about-copy { flex: 1; max-width: 58ch; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.55; color: var(--sheet-soft); }
+.about-seal {
+  flex: none;
+  margin-top: -44px;
+  color: #a4492c;
+  mix-blend-mode: multiply;
+  rotate: 8deg;
+}
+.about-seal-mark { display: block; font-family: var(--cy-font-name); font-size: 19px; font-weight: 600; line-height: 1.05; text-align: center; }
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--sheet-line);
+}
+.ledger-row:first-child { padding-top: 0; }
+.ledger-title { font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.3; margin-bottom: 2px; }
+.ledger-row p { color: var(--sheet-soft); }
+.ledger-row .ledger-when {
+  flex: none;
+  display: grid;
+  align-content: start;
+  max-width: 190px;
+  color: var(--card-accent);
+  font: 400 17px/1.3 var(--cy-font-hand);
+  text-align: right;
+}
+.ledger-when span { color: var(--sheet-soft); font-size: 15px; }
+.toolkit { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.toolkit-title { color: var(--sheet-soft); font-size: 14px; font-weight: 500; }
+.toolkit .tools { margin-top: 8px; }
+
+.ticket-wrap { display: flex; justify-content: center; padding: 8px 0 4px; }
+.ticket-face { display: grid; align-content: center; gap: 3px; height: 100%; padding: 16px 20px 16px 26px; }
+.ticket-kicker { margin-bottom: 8px; font: 400 21px/1.2 var(--cy-font-hand); }
+.ticket-link {
+  pointer-events: auto;
+  width: fit-content;
+  padding: 5px 0;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: #3a2c1466;
+  text-underline-offset: 3px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.ticket-link:hover { text-decoration-color: currentColor; }
+.ticket-place { margin-top: 6px; font-size: 14px; }
+.ticket-stub {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: #fff4e0;
+  font: 400 21px/1 var(--cy-font-hand);
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+
+/* Music and Inspiration: real entries when they exist, a collage until then. */
+.crate { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px; margin: 28px 0 0; padding: 0; list-style: none; }
+.sleeve {
+  position: relative;
+  isolation: isolate;
+  min-height: 150px;
+  padding: 16px;
+  background: var(--slip);
+  box-shadow: 0 1px 3px #2c211230;
+  overflow: hidden;
+}
+.sleeve-disc {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: -22%;
+  width: 72%;
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--card-stock) 0 16%, var(--card-accent) 17% 19%, color-mix(in srgb, var(--card-accent) 75%, #111) 20%);
+  opacity: 0.2;
+}
+.collage {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  aspect-ratio: 16 / 10;
+  margin: clamp(24px, 4vh, 40px) 0 0;
+}
+.clipping { position: absolute; display: block; filter: drop-shadow(0 3px 6px #2c211240); }
+.clipping-art { position: absolute; inset: 0; display: block; background-repeat: no-repeat; }
+.clipping-tape {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 66px;
+  height: 18px;
+  translate: -50% 0;
+  rotate: -4deg;
+  background: #d6b974a6;
+  border-inline: 1px dashed #baa26b70;
+}
+.clip-a { left: 0; top: 2%; width: 56%; height: 74%; rotate: -2.2deg; }
+.clip-b { left: 46%; top: 30%; width: 40%; height: 58%; rotate: 2.6deg; }
+.clip-c { left: 28%; top: 62%; width: 30%; height: 36%; rotate: -3.4deg; }
+.collage-inspiration .clip-a { width: 46%; height: 66%; }
+.collage-inspiration .clip-b { left: 40%; top: 6%; width: 38%; height: 56%; }
+.collage-disc {
+  position: absolute;
+  left: 44%;
+  top: 2%;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--card-stock) 0 15%, #1f1b17 16% 17%, transparent 18%),
+    repeating-radial-gradient(circle, #1f1b17 0 3px, #2d2823 3px 5px);
+  box-shadow: 0 3px 8px #2c211250;
+}
+.collage-disc-back { left: 62%; top: 12%; width: 26%; opacity: 0.92; }
+.ask-note {
+  position: absolute;
+  left: 8%;
+  bottom: 4%;
+  padding: 12px 20px 10px;
+  background: var(--sheet);
+  color: var(--sheet-ink);
+  font: 400 21px/1.25 var(--cy-font-hand);
+  rotate: -1.6deg;
+  box-shadow: 0 2px 6px #2c211233;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--card-accent) 45%, transparent);
+  text-underline-offset: 4px;
+  transition: rotate 200ms var(--cy-ease), box-shadow 200ms;
+}
+.ask-note:hover { rotate: 0deg; box-shadow: 0 4px 12px #2c211240; }
+.ask-note:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 3px; }
+.collage-inspiration .ask-note { left: auto; right: 4%; bottom: 8%; rotate: 1.4deg; }
+.sleeve-title { position: relative; max-width: 80%; font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.25; }
+.sleeve-by { color: var(--sheet-soft); }
+.sleeve-note { max-width: 80%; margin-top: 8px; font: 400 16px/1.35 var(--cy-font-hand); }
+
+.board { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 26px 22px; margin: 32px 0 0; padding: 0; list-style: none; }
+.pin { position: relative; isolation: isolate; min-height: 130px; padding: 24px 20px 20px; }
+.pin-blank { opacity: 0.55; }
+.pin:nth-child(odd) .slip-paper { --slip-tilt: 1.3deg; }
+.pin:nth-child(even) .slip-paper { --slip-tilt: -1.1deg; }
+.pin-tape {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 62px;
+  height: 18px;
+  translate: -50% 0;
+  rotate: -3deg;
+  background: #d6b97499;
+  border-inline: 1px dashed #baa26b70;
+}
+.pin-name { font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.25; }
+.pin-note { margin-top: 6px; font: 400 17px/1.35 var(--cy-font-hand); }
+
+/* Below this the rail folds into a header row and the whole page scrolls as one. */
+@media (max-width: 760px) {
+  .expanded-card .card-heading { inset: 12px 58px auto; }
+  .expanded-card .card-rank { left: -36px; }
+  .chapter-layout {
+    inset: 62px 6px 6px;
+    display: block;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .chapter-rail {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 8px 14px;
+    align-items: center;
+    padding: 6px 12px 16px;
+  }
+  .expanded-card .chapter-arch { grid-row: 1 / 3; width: 74px; box-shadow: 0 0 0 2px var(--card-stock), 0 0 0 3px color-mix(in srgb, var(--card-accent) 45%, transparent); }
+  .chapter-note { justify-self: start; padding: 7px 11px 6px; font-size: 15px; }
+  .ink-links { margin-top: 0; justify-self: start; }
+  .chapter-sheet { min-height: calc(100dvh - 180px); }
+  .sheet-scroll { position: relative; inset: auto; overflow: visible; padding: 10px 2px; }
+  .sheet-column { padding: 22px 18px 44px; }
+  .slip { grid-template-columns: minmax(0, 1fr); padding: 22px 20px; }
+  .slip-when { grid-auto-flow: row; }
+  .pile-card { position: relative; top: auto; padding: 18px 20px 24px; }
+  .pile-home { flex-basis: 100%; margin-left: 0; }
+  .about-lede { flex-direction: column-reverse; align-items: center; gap: 12px; }
+  .about-seal { margin-top: 0; }
+  .ledger-row { flex-direction: column; gap: 4px; }
+  .ledger-row .ledger-when { max-width: none; text-align: left; order: -1; }
+  .toolkit { grid-template-columns: minmax(0, 1fr); }
+  .ticket-link { font-size: 14px; padding: 7px 0; overflow-wrap: anywhere; }
+  .ticket-kicker { margin-bottom: 4px; font-size: 18px; }
+  .ticket-face { padding: 12px 8px 12px 16px; }
+  .ticket-stub { font-size: 17px; }
+  .collage { aspect-ratio: 1 / 1.05; }
+  .clip-a { width: 72%; height: 58%; }
+  .clip-b { left: 34%; top: 36%; width: 62%; height: 46%; }
+  .clip-c { left: 4%; top: 56%; width: 44%; height: 30%; }
+  .collage-inspiration .clip-a { width: 62%; height: 50%; }
+  .collage-inspiration .clip-b { left: 42%; top: 22%; width: 56%; height: 44%; }
+  .collage-disc { left: 46%; width: 50%; }
+  .collage-disc-back { left: 60%; top: 16%; width: 38%; }
+  .ask-note, .collage-inspiration .ask-note { left: 0; right: auto; bottom: 0; font-size: 18px; }
+}
+
+/* A short window can't hold a sticky pile or a full rail. */
+@media (max-height: 720px) and (min-width: 761px) {
+  .pile-card { position: relative; top: auto; }
+}
+@media (max-height: 520px) and (min-width: 761px) {
+  .expanded-card .card-heading { inset-block-start: 8px; min-height: 36px; }
+  .expanded-card .card-title { font-size: 28px; }
+  .chapter-layout { inset: 52px 12px 10px; grid-template-columns: 132px minmax(0, 1fr); }
+  .chapter-rail { gap: 8px; padding: 4px; }
+  .expanded-card .chapter-arch { max-width: 92px; }
+  .chapter-note { display: none; }
+  .ink-link { padding: 0 9px; font-size: 13px; }
+  .card-dialog-close { top: 4px; }
+}

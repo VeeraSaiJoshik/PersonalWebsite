@@ -2,13 +2,13 @@ import { toCanvas } from "html-to-image";
 
 let fontCss: Promise<string> | null = null;
 function snapshotFonts() {
-  // Only the three fonts printed on a chapter page are needed in its texture.
+  // Only the fonts printed on a chapter page are needed in its texture.
   return fontCss ??= (async () => {
     const rules: string[] = [];
     for (const sheet of Array.from(document.styleSheets)) {
       try {
         for (const rule of Array.from(sheet.cssRules)) {
-          if (rule instanceof CSSFontFaceRule && /Samarkan|Kalam|Anek Latin/i.test(rule.cssText)) rules.push(rule.cssText);
+          if (rule instanceof CSSFontFaceRule && /Samarkan|Kalam|Anek Latin|Eczar/i.test(rule.cssText)) rules.push(rule.cssText);
         }
       } catch { /* Local font files below are same-origin. */ }
     }

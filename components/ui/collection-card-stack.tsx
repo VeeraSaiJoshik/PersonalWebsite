@@ -4,6 +4,9 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useSy
 import * as Dialog from "@radix-ui/react-dialog";
 import HoloCard from "./holo-card";
 import { PaperImage, PaperCard } from "./paper-play";
+import { ChapterBody, ChapterLive, InkLinks, TornBacking } from "./chapter-pages";
+import FoldText from "./fold-text";
+import { chapterCopy } from "@/lib/chapters";
 import { capturePage } from "@/lib/paper/capture";
 import type { PaperSurface } from "@/lib/paper/paper-surface";
 import { X } from "lucide-react";
@@ -51,27 +54,18 @@ function subscribeToReducedMotion(update: () => void) {
 const getReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const getServerReducedMotion = () => true;
 
-function CardFace({ card, index, expanded = false }: {
-  card: CollectionCard;
-  index: number;
-  expanded?: boolean;
-}) {
+function CardFace({ card, index }: { card: CollectionCard; index: number }) {
   return (
     <>
       <span className="card-heading">
         <span className="card-rank" aria-hidden="true">
           {index + 1}<small>{card.suit}</small>
         </span>
-        {expanded ? (
-          <Dialog.Title asChild>
-            <span className="card-title" role="heading" aria-level={2}>{card.title}</span>
-          </Dialog.Title>
-        ) : <span className="card-title">{card.title}</span>}
+        <span className="card-title">{card.title}</span>
       </span>
-      <span className={`card-window${expanded ? " card-content-window" : ""}`}>
+      <span className="card-window">
         <PaperImage
-          interactive={expanded}
-          label={expanded ? `${card.title} artwork` : undefined}
+          interactive={false}
           className="card-world-art"
           src={`/images/card-worlds/${card.id}.webp`}
           alt=""
@@ -80,24 +74,66 @@ function CardFace({ card, index, expanded = false }: {
           decoding="async"
           draggable="false"
         />
-        {expanded && (
-          <span className="card-placeholder">
-            <span className="placeholder-suit" aria-hidden="true">{card.suit}</span>
-            <span className="placeholder-eyebrow">A chapter in the making</span>
-            <span className="placeholder-title" role="heading" aria-level={3}>A little more, soon.</span>
-            <Dialog.Description asChild>
-              <span className="placeholder-description">
-                This is where the {card.title.toLowerCase()} chapter will live.
-              </span>
-            </Dialog.Description>
-            <span className="placeholder-rule" aria-hidden="true" />
-          </span>
-        )}
       </span>
       <span className="card-corner" aria-hidden="true">
         {index + 1}<small>{card.suit}</small>
       </span>
     </>
+  );
+}
+
+// The page is the paper. The arch shrinks to a small plate tipped in beside it.
+function ChapterFace({ card, index, live }: { card: CollectionCard; index: number; live: boolean }) {
+  const copy = chapterCopy[card.id];
+  return (
+    <ChapterLive value={live}>
+      <div className="card-heading">
+        <span className="card-rank" aria-hidden="true">
+          {index + 1}<small>{card.suit}</small>
+        </span>
+        <Dialog.Title asChild>
+          <h2 className="card-title">{card.title}</h2>
+        </Dialog.Title>
+      </div>
+      <div className="chapter-layout" data-chapter={card.id}>
+        <aside className="chapter-rail">
+          <div className="card-window chapter-arch">
+            <PaperImage
+              label={`${card.title} artwork`}
+              className="card-world-art"
+              src={`/images/card-worlds/${card.id}.webp`}
+              alt=""
+              width="768"
+              height="1024"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+          <p className="chapter-note">{copy.note}</p>
+          <InkLinks ink={card.accent} paper={card.stock} />
+        </aside>
+        <div className="chapter-sheet">
+          <TornBacking seed={index * 7 + 40} depth={16} across={70} down={44} className="sheet-under sheet-under-ledger" />
+          <TornBacking seed={index * 7 + 70} depth={14} across={70} down={44} className="sheet-under sheet-under-stock" />
+          <TornBacking seed={index * 7 + 3} depth={10} across={90} down={54} className="sheet-paper" />
+          <div className="sheet-scroll" tabIndex={0} role="region" aria-label={`${card.title} chapter`}>
+            <div className="sheet-column">
+              <header className="chapter-lede">
+                <p className="chapter-headline">
+                  <FoldText text={copy.headline} trigger="hover" hoverRefold splitBy="char" fontSize="inherit" fontWeight="inherit" refoldAngle={38} refoldRadius={90} creaseShading={0.3} />
+                </p>
+                <Dialog.Description asChild>
+                  <p className="chapter-intro">{copy.intro}</p>
+                </Dialog.Description>
+              </header>
+              <ChapterBody id={card.id} />
+            </div>
+          </div>
+          <PaperImage className="chapter-cutout cutout-rosette" src="/images/scrapbook/cutout-rosette.webp" alt="" width="520" height="520" decoding="async" />
+          <PaperImage className="chapter-cutout cutout-gateway" src="/images/scrapbook/cutout-gateway.webp" alt="" width="520" height="520" decoding="async" />
+        </div>
+      </div>
+    </ChapterLive>
   );
 }
 
@@ -115,6 +151,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
   const cardCanvasRef = useRef<HTMLCanvasElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef(() => {});
+  const [live, setLive] = useState(false);
   const settleRef = useRef(() => {});
 
   useLayoutEffect(() => {
@@ -168,6 +205,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
       canvas.style.visibility = "hidden";
       veil.style.opacity = "1";
       dialog.dataset.phase = "open";
+      setLive(true);
       closeButtonRef.current?.focus({ preventScroll: true });
     };
     const returnCard = () => {
@@ -378,7 +416,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
             className="expanded-card card-page-panel"
             style={{ "--card-accent": card.accent, "--card-stock": card.stock } as CSSProperties}
           >
-            <CardFace card={card} index={index} expanded />
+            <ChapterFace card={card} index={index} live={live} />
             <button
               ref={closeButtonRef}
               type="button"
