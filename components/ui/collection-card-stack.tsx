@@ -427,7 +427,14 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
               "--card-delay": `${index * 80}ms`,
             } as CSSProperties;
             return (
-              <li key={card.id} className="collection-slot" style={style} data-selected={selection?.index === index}>
+              <li
+                key={card.id}
+                className="collection-slot"
+                style={style}
+                data-selected={selection?.index === index}
+                onPointerEnter={() => { loadChapters().catch(() => {}); }}
+                onFocus={() => { loadChapters().catch(() => {}); }}
+              >
                 <div className="card-travel">
                   <div className="collection-lift">
                   <HoloCard className="collection-holo" style={{ width: "100%", height: "100%" }} preset="gold" intensity={0.36} edgeSparkle={0.25} glare={0.12} tiltMax={8} hoverScale={1.015} radius={11} shadow={false} idle={false} enabled={!selection}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { BorderBeam } from "border-beam";
 import { Liquid } from "liquid-gooey";
@@ -163,8 +163,33 @@ const pileStocks = [
 ];
 
 function ProjectsChapter() {
+  // A parked sheet only hides the one behind it if it is at least as tall, so
+  // the sticky pile needs every sheet at the height of the tallest.
+  const pileRef = useRef<HTMLOListElement>(null);
+  useLayoutEffect(() => {
+    const pile = pileRef.current;
+    if (!pile) return;
+    let width = -1;
+    const measure = () => {
+      pile.style.removeProperty("--pile-height");
+      const heights = Array.from(pile.children, card => (card as HTMLElement).offsetHeight);
+      pile.style.setProperty("--pile-height", `${Math.max(...heights)}px`);
+    };
+    measure();
+    document.fonts.ready.then(measure);
+    const observer = new ResizeObserver(([entry]) => {
+      // Height changes here come from this measurement; only width reflows the text.
+      if (entry.contentRect.width !== width) {
+        width = entry.contentRect.width;
+        measure();
+      }
+    });
+    observer.observe(pile);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <ol className="pile">
+    <ol className="pile" ref={pileRef}>
       {projects.map((project, i) => (
         <li
           key={project.name}

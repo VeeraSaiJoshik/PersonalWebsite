@@ -279,6 +279,9 @@
   --sheet-line: color-mix(in srgb, var(--pile-ink) 30%, transparent);
   --card-accent: var(--pile-ink);
 }
+@media (min-width: 761px) and (min-height: 721px) {
+  .pile-card { min-height: var(--pile-height); }
+}
 .pile-paper { --torn-face: var(--pile-stock); z-index: -1; filter: drop-shadow(0 -2px 5px #2c211230); }
 .pile-tab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; min-height: 36px; }
 .pile-number { font: 400 18px/1.2 var(--cy-font-hand); }
