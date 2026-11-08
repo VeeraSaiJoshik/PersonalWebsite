@@ -270,8 +270,8 @@
   object-fit: contain;
 }
 .scrap-gateway {
-  width: clamp(400px, 38vw, 620px);
-  left: clamp(-230px, -15vw, -100px);
+  width: clamp(340px, 31vw, 500px);
+  left: clamp(-190px, -13vw, -90px);
   bottom: -64px;
   transform: rotate(-12deg);
 }
