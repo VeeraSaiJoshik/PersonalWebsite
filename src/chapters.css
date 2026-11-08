@@ -13,6 +13,8 @@
   --slip: color-mix(in srgb, var(--card-stock) 34%, #efe5cf);
   background: color-mix(in srgb, var(--card-stock) 62%, #1d1b16);
 }
+/* The title sits on dimmed stock in the evening, so it can't keep its dark ink. */
+[data-theme="dark"] .expanded-card .card-heading { color: #f6efdf; }
 
 .chapter-layout {
   position: absolute;
@@ -126,7 +128,8 @@
 [data-chapter="music"] .cutout-rosette { top: auto; right: -30px; bottom: -30px; }
 [data-chapter="inspiration"] .cutout-rosette { display: none; }
 [data-chapter="inspiration"] .cutout-gateway { left: auto; right: -40px; rotate: 9deg; }
-@media (max-width: 1180px) { .chapter-cutout { display: none !important; } }
+/* Below this the margins are too narrow to hold a cutout clear of the text. */
+@media (max-width: 1279px) { .chapter-cutout { display: none !important; } }
 .sheet-paper { --torn-fibre: var(--sheet-fibre); --torn-face: var(--sheet); filter: drop-shadow(-1px 4px 8px #2c211238); }
 .sheet-paper .torn-face {
   inset: 2px;
@@ -285,6 +288,8 @@
 .pile-summary { max-width: 62ch; }
 
 /* About: the stamp, ledgers, and a ticket worth tearing. */
+/* The stamp hangs up beside the intro, so the intro has to stop short of it. */
+[data-chapter="about-me"] .chapter-intro { max-width: min(58ch, calc(100% - 176px)); }
 .about-lede { display: flex; align-items: flex-start; gap: 28px; margin-top: 16px; }
 .about-copy { flex: 1; max-width: 58ch; font-size: clamp(17px, 1.5vw, 19px); line-height: 1.55; color: var(--sheet-soft); }
 .about-seal {
@@ -362,13 +367,14 @@
   position: absolute;
   z-index: -1;
   top: 50%;
-  right: -22%;
-  width: 72%;
+  right: -26%;
+  width: 58%;
   aspect-ratio: 1;
   translate: 0 -50%;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--card-stock) 0 16%, var(--card-accent) 17% 19%, color-mix(in srgb, var(--card-accent) 75%, #111) 20%);
-  opacity: 0.2;
+  background:
+    radial-gradient(circle, var(--card-stock) 0 15%, #1f1b17 16% 17%, transparent 18%),
+    repeating-radial-gradient(circle, #1f1b17 0 3px, #2d2823 3px 5px);
 }
 .collage {
   position: relative;
@@ -426,9 +432,10 @@
 .ask-note:hover { rotate: 0deg; box-shadow: 0 4px 12px #2c211240; }
 .ask-note:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 3px; }
 .collage-inspiration .ask-note { left: auto; right: 4%; bottom: 8%; rotate: 1.4deg; }
-.sleeve-title { position: relative; max-width: 80%; font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.25; }
+.sleeve-by { max-width: 68%; }
+.sleeve-title { position: relative; max-width: 68%; font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.25; }
 .sleeve-by { color: var(--sheet-soft); }
-.sleeve-note { max-width: 80%; margin-top: 8px; font: 400 16px/1.35 var(--cy-font-hand); }
+.sleeve-note { max-width: 68%; margin-top: 8px; font: 400 16px/1.35 var(--cy-font-hand); }
 
 .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 26px 22px; margin: 32px 0 0; padding: 0; list-style: none; }
 .pin { position: relative; isolation: isolate; min-height: 130px; padding: 24px 20px 20px; }
@@ -477,6 +484,7 @@
   .slip-when { grid-auto-flow: row; }
   .pile-card { position: relative; top: auto; padding: 18px 20px 24px; }
   .pile-home { flex-basis: 100%; margin-left: 0; }
+  [data-chapter="about-me"] .chapter-intro { max-width: none; }
   .about-lede { flex-direction: column-reverse; align-items: center; gap: 12px; }
   .about-seal { margin-top: 0; }
   .ledger-row { flex-direction: column; gap: 4px; }

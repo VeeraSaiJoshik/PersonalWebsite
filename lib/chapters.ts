@@ -245,8 +245,8 @@ export const pins: Pin[] = [];
 export const chapterCopy = {
   music: {
     headline: "What's on the turntable.",
-    intro: "The crate is still being packed. Records land here soon.",
-    note: "side A, coming up",
+    intro: records.length ? "A few that stay on repeat." : "The crate is still being packed. Records land here soon.",
+    note: records.length ? "side A" : "side A, coming up",
   },
   projects: {
     headline: "Things I've built.",
@@ -260,8 +260,8 @@ export const chapterCopy = {
   },
   inspiration: {
     headline: "Pinned above the desk.",
-    intro: "The board is up. The pins are on their way.",
-    note: "more pins soon",
+    intro: pins.length ? "The things that stuck." : "The board is up. The pins are on their way.",
+    note: pins.length ? "still adding" : "more pins soon",
   },
   "about-me": {
     headline: about.name,

@@ -4,9 +4,6 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useSy
 import * as Dialog from "@radix-ui/react-dialog";
 import HoloCard from "./holo-card";
 import { PaperImage, PaperCard } from "./paper-play";
-import { ChapterBody, ChapterLive, InkLinks, TornBacking } from "./chapter-pages";
-import FoldText from "./fold-text";
-import { chapterCopy } from "@/lib/chapters";
 import { capturePage } from "@/lib/paper/capture";
 import type { PaperSurface } from "@/lib/paper/paper-surface";
 import { X } from "lucide-react";
@@ -20,7 +17,17 @@ const cards = [
 ] as const;
 
 type CollectionCard = (typeof cards)[number];
-type Selection = { index: number; trigger: HTMLButtonElement; travel: HTMLDivElement };
+type ChapterModule = typeof import("./chapter-pages");
+type Selection = { index: number; trigger: HTMLButtonElement; travel: HTMLDivElement; Face: ChapterModule["ChapterFace"] };
+
+// Chapter content and its animation libraries stay out of the first load.
+let chapterModule: Promise<ChapterModule> | undefined;
+function loadChapters() {
+  return chapterModule ??= import("./chapter-pages").catch((error) => {
+    chapterModule = undefined;
+    throw error;
+  });
+}
 
 // Match the scraps' crawl: scoot, hold, sidestep, hold, then settle.
 const cardScoot: Keyframe[] = [
@@ -82,67 +89,12 @@ function CardFace({ card, index }: { card: CollectionCard; index: number }) {
   );
 }
 
-// The page is the paper. The arch shrinks to a small plate tipped in beside it.
-function ChapterFace({ card, index, live }: { card: CollectionCard; index: number; live: boolean }) {
-  const copy = chapterCopy[card.id];
-  return (
-    <ChapterLive value={live}>
-      <div className="card-heading">
-        <span className="card-rank" aria-hidden="true">
-          {index + 1}<small>{card.suit}</small>
-        </span>
-        <Dialog.Title asChild>
-          <h2 className="card-title">{card.title}</h2>
-        </Dialog.Title>
-      </div>
-      <div className="chapter-layout" data-chapter={card.id}>
-        <aside className="chapter-rail">
-          <div className="card-window chapter-arch">
-            <PaperImage
-              label={`${card.title} artwork`}
-              className="card-world-art"
-              src={`/images/card-worlds/${card.id}.webp`}
-              alt=""
-              width="768"
-              height="1024"
-              decoding="async"
-              draggable="false"
-            />
-          </div>
-          <p className="chapter-note">{copy.note}</p>
-          <InkLinks ink={card.accent} paper={card.stock} />
-        </aside>
-        <div className="chapter-sheet">
-          <TornBacking seed={index * 7 + 40} depth={16} across={70} down={44} className="sheet-under sheet-under-ledger" />
-          <TornBacking seed={index * 7 + 70} depth={14} across={70} down={44} className="sheet-under sheet-under-stock" />
-          <TornBacking seed={index * 7 + 3} depth={10} across={90} down={54} className="sheet-paper" />
-          <div className="sheet-scroll" tabIndex={0} role="region" aria-label={`${card.title} chapter`}>
-            <div className="sheet-column">
-              <header className="chapter-lede">
-                <p className="chapter-headline">
-                  <FoldText text={copy.headline} trigger="hover" hoverRefold splitBy="char" fontSize="inherit" fontWeight="inherit" refoldAngle={38} refoldRadius={90} creaseShading={0.3} />
-                </p>
-                <Dialog.Description asChild>
-                  <p className="chapter-intro">{copy.intro}</p>
-                </Dialog.Description>
-              </header>
-              <ChapterBody id={card.id} />
-            </div>
-          </div>
-          <PaperImage className="chapter-cutout cutout-rosette" src="/images/scrapbook/cutout-rosette.webp" alt="" width="520" height="520" decoding="async" />
-          <PaperImage className="chapter-cutout cutout-gateway" src="/images/scrapbook/cutout-gateway.webp" alt="" width="520" height="520" decoding="async" />
-        </div>
-      </div>
-    </ChapterLive>
-  );
-}
-
 function ChapterPage({ selection, reducedMotion, onClose }: {
   selection: Selection;
   reducedMotion: boolean;
   onClose: () => void;
 }) {
-  const { index, trigger, travel } = selection;
+  const { index, trigger, travel, Face } = selection;
   const card = cards[index];
   const dialogRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -416,7 +368,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
             className="expanded-card card-page-panel"
             style={{ "--card-accent": card.accent, "--card-stock": card.stock } as CSSProperties}
           >
-            <ChapterFace card={card} index={index} live={live} />
+            <Face card={card} index={index} live={live} />
             <button
               ref={closeButtonRef}
               type="button"
@@ -442,6 +394,18 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
   useEffect(() => {
     onOpenChange?.(selection !== null);
   }, [selection, onOpenChange]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => { loadChapters().catch(() => {}); }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const openChapter = (index: number, trigger: HTMLButtonElement) => {
+    const travel = trigger.closest(".card-travel") as HTMLDivElement;
+    loadChapters()
+      .then(({ ChapterFace }) => setSelection({ index, trigger, travel, Face: ChapterFace }))
+      .catch((error) => console.warn("Chapter could not load.", error));
+  };
 
   return (
     <Dialog.Root open={selection !== null}>
@@ -475,11 +439,7 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
                     aria-expanded={selection?.index === index}
                     aria-controls={selection?.index === index ? "expanded-collection-card" : undefined}
                     aria-describedby={instructionsId}
-                    onClick={(event) => setSelection({
-                      index,
-                      trigger: event.currentTarget,
-                      travel: event.currentTarget.closest(".card-travel") as HTMLDivElement,
-                    })}
+                    onClick={(event) => openChapter(index, event.currentTarget)}
                   >
                     <CardFace card={card} index={index} />
                   </PaperCard>

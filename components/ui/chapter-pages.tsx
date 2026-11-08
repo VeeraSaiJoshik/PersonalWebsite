@@ -1,20 +1,21 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { BorderBeam } from "border-beam";
 import { Liquid } from "liquid-gooey";
 import CircularText from "./circular-text";
 import CountUp from "./count-up";
+import FoldText from "./fold-text";
+import { PaperImage } from "./paper-play";
 import TearTicket from "./tear-ticket";
 import { tornClip } from "@/lib/paper/torn-edge";
-import { about, alongside, before, contact, now, pins, projects, records, type ChapterId, type Role, type Stat } from "@/lib/chapters";
+import { about, alongside, before, chapterCopy, contact, now, pins, projects, records, type ChapterId, type Role, type Stat } from "@/lib/chapters";
 
 /** True once the paper has flattened and the live page has replaced its texture. */
 const LiveContext = createContext(false);
 
-export const ChapterLive = LiveContext.Provider;
-
-export function TornBacking({ seed, depth = 5, across, down, className = "" }: {
+function TornBacking({ seed, depth = 5, across, down, className = "" }: {
   seed: number;
   depth?: number;
   across?: number;
@@ -111,9 +112,10 @@ function RoleSlip({ role, seed, featured = false }: { role: Role; seed: number; 
     <BorderBeam
       size="md"
       colorVariant="sunset"
-      theme="light"
-      strength={0.55}
-      duration={7}
+      theme="dark"
+      strength={0.9}
+      saturation={1.4}
+      duration={8}
       borderRadius={6}
       active={live}
       className="slip-beam"
@@ -215,6 +217,7 @@ function ContactTicket() {
         holeSize={4}
         rotate={-1.5}
         tiltMax={4}
+        tearAngle={16}
         background="#e2c98f"
         stubBackground="#c9663f"
         color="#3a2c14"
@@ -372,10 +375,16 @@ function InspirationChapter() {
   );
 }
 
-export function InkLinks({ ink, paper }: { ink: string; paper: string }) {
+function InkLinks({ ink, paper }: { ink: string; paper: string }) {
   const [apart, setApart] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  // Chrome lets Tab land on the library's decorative SVG group, despite aria-hidden.
+  useEffect(() => {
+    navRef.current?.querySelectorAll("svg g").forEach(group => group.setAttribute("tabindex", "-1"));
+  });
   return (
     <nav
+      ref={navRef}
       className="ink-links"
       aria-label="Contact"
       onPointerEnter={() => setApart(true)}
@@ -396,7 +405,7 @@ export function InkLinks({ ink, paper }: { ink: string; paper: string }) {
   );
 }
 
-export function ChapterBody({ id }: { id: ChapterId }) {
+function ChapterBody({ id }: { id: ChapterId }) {
   switch (id) {
     case "music": return <MusicChapter />;
     case "projects": return <ProjectsChapter />;
@@ -404,4 +413,63 @@ export function ChapterBody({ id }: { id: ChapterId }) {
     case "inspiration": return <InspirationChapter />;
     case "about-me": return <AboutChapter />;
   }
+}
+
+// The page is the paper. The arch shrinks to a small plate tipped in beside it.
+export function ChapterFace({ card, index, live }: {
+  card: { id: ChapterId; title: string; suit: string; accent: string; stock: string };
+  index: number;
+  live: boolean;
+}) {
+  const copy = chapterCopy[card.id];
+  return (
+    <LiveContext.Provider value={live}>
+      <div className="card-heading">
+        <span className="card-rank" aria-hidden="true">
+          {index + 1}<small>{card.suit}</small>
+        </span>
+        <Dialog.Title asChild>
+          <h2 className="card-title">{card.title}</h2>
+        </Dialog.Title>
+      </div>
+      <div className="chapter-layout" data-chapter={card.id}>
+        <aside className="chapter-rail">
+          <div className="card-window chapter-arch">
+            <PaperImage
+              label={`${card.title} artwork`}
+              className="card-world-art"
+              src={`/images/card-worlds/${card.id}.webp`}
+              alt=""
+              width="768"
+              height="1024"
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+          <p className="chapter-note">{copy.note}</p>
+          <InkLinks ink={card.accent} paper={card.stock} />
+        </aside>
+        <div className="chapter-sheet">
+          <TornBacking seed={index * 7 + 40} depth={16} across={70} down={44} className="sheet-under sheet-under-ledger" />
+          <TornBacking seed={index * 7 + 70} depth={14} across={70} down={44} className="sheet-under sheet-under-stock" />
+          <TornBacking seed={index * 7 + 3} depth={10} across={90} down={54} className="sheet-paper" />
+          <div className="sheet-scroll" tabIndex={0} role="region" aria-label={`${card.title} chapter`}>
+            <div className="sheet-column">
+              <header className="chapter-lede">
+                <p className="chapter-headline">
+                  <FoldText text={copy.headline} trigger="hover" hoverRefold splitBy="char" fontSize="inherit" fontWeight="inherit" refoldAngle={38} refoldRadius={90} creaseShading={0.3} />
+                </p>
+                <Dialog.Description asChild>
+                  <p className="chapter-intro">{copy.intro}</p>
+                </Dialog.Description>
+              </header>
+              <ChapterBody id={card.id} />
+            </div>
+          </div>
+          <PaperImage className="chapter-cutout cutout-rosette" src="/images/scrapbook/cutout-rosette.webp" alt="" width="520" height="520" decoding="async" />
+          <PaperImage className="chapter-cutout cutout-gateway" src="/images/scrapbook/cutout-gateway.webp" alt="" width="520" height="520" decoding="async" />
+        </div>
+      </div>
+    </LiveContext.Provider>
+  );
 }
