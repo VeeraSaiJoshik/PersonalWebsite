@@ -87,7 +87,7 @@ A chapter is a paper collage with one physical toy on it, not a formatted resume
 | Projects | A wall of torn sheets at different sizes, each with a picture and one big number. Sheets lean toward the pointer and their neighbours make room. Clicking one opens its full-screen page | React Bits Count Up, Fold Text, Click Spark |
 | Experience | Torn strips in a ledger, grouped into Now, Before and Alongside. A picture tucked into each strip pops out under the pointer. Clicking one opens its full-screen page | React Bits Count Up, Fold Text, Click Spark |
 | About Me | Peelable award stickers that can go anywhere on the page, a name that swells under the cursor, a spinning stamp to fling, a toolkit that collapses into a pile you can throw, and a ticket to tear | React Bits Sticker Peel, Variable Proximity, Circular Text, Falling Text, Tear Ticket |
-| Music | A playable paper harmonium with Telugu swaras (click, glide, or A to K) and a record to fling | Web Audio, React Bits Circular Text, Elastic Slider |
+| Music | A paper turntable that plays real 30-second previews of Jo's Spotify top 40. Its tonearm tracks progress, the platter spins down when paused, and the record can be scratched by hand. Beside it, a crate of sleeves whose records peek out on hover, liner notes, and the playable harmonium below | React Bits Circular Text, Elastic Slider; previews and artwork from Apple's iTunes Search API |
 | Inspiration | A working shredder fed with joke placeholder notes, and a trail of art scraps following the cursor | React Bits Shredder, Image Trail |
 | All | Headlines fold open and crease near the cursor, paper confetti on every click, contact links are an ink blot on a magnet | React Bits Fold Text, Click Spark, Magnet, `liquid-gooey` |
 

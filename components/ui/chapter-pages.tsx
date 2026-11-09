@@ -11,6 +11,7 @@ import ImageTrail from "./image-trail";
 import Magnet from "./magnet";
 import { PaperHarmonium } from "./paper-harmonium";
 import { PaperImage } from "./paper-play";
+import { RecordPlayer } from "./record-player";
 import Shredder from "./shredder";
 import StickerPeel from "./sticker-peel";
 import TearTicket from "./tear-ticket";
@@ -18,7 +19,7 @@ import VariableProximity from "./variable-proximity";
 import { Deal, EntryFigure, stockVars, tilt, TornBacking } from "./chapter-bits";
 import { useEntryDetail } from "./entry-detail";
 import { projectEntries, roleEntries, roleGroups } from "@/lib/chapter-details";
-import { about, chapterCopy, contact, pins, placeholders, records, type ChapterId } from "@/lib/chapters";
+import { about, chapterCopy, contact, pins, placeholders, type ChapterId } from "@/lib/chapters";
 
 const subscribeToNarrow = (update: () => void) => {
   const media = window.matchMedia("(max-width: 760px)");
@@ -346,6 +347,19 @@ function AboutChapter() {
         </div>
       </section>
       <section className="chapter-section">
+        <h3 className="section-title">Outside of tech</h3>
+        <ul className="board outside">
+          {about.outside.map((item, i) => (
+            <li className="pin" key={item.title}>
+              <TornBacking seed={421 + i * 23} depth={3} className="slip-paper" />
+              <span className="pin-tape" aria-hidden="true" />
+              <h4 className="pin-name">{item.title}</h4>
+              <p className="pin-note">{item.note}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="chapter-section">
         <h3 className="section-title">Say hello</h3>
         <ContactTicket />
       </section>
@@ -353,30 +367,14 @@ function AboutChapter() {
   );
 }
 
-function RecordCrate() {
-  if (!records.length) return null;
-  return (
-    <ul className="crate">
-      {records.map(record => (
-        <li className="sleeve" key={`${record.title}-${record.by}`}>
-          <span className="sleeve-disc" aria-hidden="true" />
-          <h3 className="sleeve-title">{record.href ? <a href={record.href} target="_blank" rel="noreferrer">{record.title}</a> : record.title}</h3>
-          <p className="sleeve-by">{record.by}</p>
-          {record.note && <p className="sleeve-note">{record.note}</p>}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function MusicChapter() {
   return (
     <>
-      <RecordCrate />
-      <PaperHarmonium />
-      <Deal order={8} kind="slide" className="ask-row">
-        <a className="ask-note" href={`mailto:${contact.email}`}>Ask me what's actually on repeat.</a>
-      </Deal>
+      <RecordPlayer />
+      <section className="chapter-section">
+        <Deal order={6} kind="slide"><h3 className="section-title">Play along<span className="section-hint">press the keys, run a finger across them, or use A to K</span></h3></Deal>
+        <PaperHarmonium />
+      </section>
     </>
   );
 }

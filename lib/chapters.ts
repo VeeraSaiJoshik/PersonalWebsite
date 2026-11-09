@@ -1,9 +1,9 @@
 // Everything the chapter pages say lives here, so copy can change without
-// touching layout. All of it comes from Jo's resume. Music and Inspiration are
-// empty because the resume says nothing about them: add entries to `records`
-// and `pins` and the pages render them instead of their blank state. The longer
-// pages behind each project and job add their pictures and stories from
-// `lib/chapter-details.ts`.
+// touching layout. Facts and figures come from Jo's resume, and where the college
+// application disagrees, the resume wins. Inspiration is empty because neither
+// says what belongs there: add entries to `pins` and the page renders them. The
+// longer pages behind each project and job add their pictures and stories from
+// `lib/chapter-details.ts`, and the Music page's tracks live in `lib/records.ts`.
 
 export type Stat = {
   /** Exactly what is printed once settled, e.g. "$32,000". */
@@ -32,7 +32,6 @@ export type Project = {
   tools?: string[];
 };
 
-export type RecordEntry = { title: string; by: string; note?: string; href?: string };
 export type Pin = { name: string; note: string; href?: string };
 
 export const contact = {
@@ -241,12 +240,27 @@ export const about = {
       note: "Translational Medical Sciences. Awarded a $2,000 grant to present in Columbus, Ohio.",
     },
   ],
+  outside: [
+    { title: "Bollywood rom-coms", note: "Colorful dances and corny jokes, but the best part is debating afterward over who the real hero was." },
+    { title: "Vlogs", note: "I keep compulsive vlogs, personal and professional. They remind me why I started." },
+    { title: "Crochet", note: "It started as a bonding activity with my mother. Now I turn yarn into embarrassing sweaters." },
+    { title: "Soccer", note: "Club player for Sporting Arkansas, plus 25+ games refereed and a summer helping coach younger players." },
+  ],
   languages: ["C", "C++", "Java", "JavaScript", "TypeScript", "Python", "Dart", "Go", "Rust"],
   frameworks: ["Flutter", "React", "Next.js", "Vercel", "FastAPI", "OpenCV", "TensorFlow", "HuggingFace", "AWS", "GCP", "Docker", "Kubernetes"],
 };
 
-/** Add records here, e.g. { title: "Album", by: "Artist", note: "Why it stays on" }. */
-export const records: RecordEntry[] = [];
+/** Liner notes for the Music page, in Jo's own words from the application. */
+export const linerNotes = {
+  film: {
+    heading: "Why so many soundtracks",
+    body: "Growing up, I idolized Bollywood movies, drawn to their colorful dances, emotional dialogues, and social messages. That love for film led me to dance, where I performed at local festivals and community events.",
+  },
+  leaving: {
+    heading: "The song that sounded like leaving home",
+    body: "The song's melancholic opening mirrors how leaving Bentonville felt: my morning bike rides, my brother's endless squabbling, the aimless drives with my friends. But, just like the song's accelerating tempo, the nostalgia brings anticipation with it.",
+  },
+};
 
 /** Add people, books, or ideas here, e.g. { name: "Who or what", note: "Why it stuck" }. */
 export const pins: Pin[] = [];
@@ -262,8 +276,8 @@ export const placeholders = [
 export const chapterCopy = {
   music: {
     headline: "What's on the turntable.",
-    intro: "The crate's still being packed, so play something in the meantime. Press the keys, run a finger across them, or use A to K.",
-    note: records.length ? "side A" : "side A, coming up",
+    intro: "My Spotify top 40 from November 2026. Pick a sleeve to drop the needle, then grab the record and spin it by hand.",
+    note: "side A",
   },
   projects: {
     headline: "Things I've built.",

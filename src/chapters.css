@@ -208,7 +208,7 @@
 .card-dialog-root[data-phase="leaving"] .deal,
 .card-dialog-root[data-phase="leaving"] .chapter-intro,
 .card-dialog-root[data-phase="leaving"] .chapter-section,
-.card-dialog-root[data-phase="leaving"] .crate,
+.card-dialog-root[data-phase="leaving"] .music-floor,
 .card-dialog-root[data-phase="leaving"] .board {
   animation: deal-out 240ms cubic-bezier(0.55, 0, 0.9, 0.4) forwards;
   animation-delay: calc(var(--deal-order, 0) * 8ms);
@@ -608,9 +608,6 @@
 .detail-next img { flex: none; width: clamp(110px, 18vw, 320px); aspect-ratio: 3 / 2; object-fit: cover; border: 5px solid #fbf5e6; rotate: 3deg; box-shadow: 0 6px 14px #2c211255; transition: rotate 340ms var(--spring), scale 340ms var(--spring); }
 .detail-next:hover img { rotate: -2deg; scale: 1.08; }
 
-.detail-link { display: flex; align-items: center; gap: 4px; width: fit-content; min-height: 44px; margin-top: 8px; font: 400 clamp(18px, 1.3vw, 22px)/1.2 var(--cy-font-hand); text-decoration: underline; text-underline-offset: 4px; }
-.detail-link:focus-visible { outline: 3px solid var(--entry-ink); outline-offset: 2px; }
-
 /* About: name, stamp, stickers, a knockable toolkit, a ticket to tear. */
 [data-chapter="about-me"] .sheet-column { max-width: 960px; }
 [data-chapter="about-me"] .chapter-intro { max-width: min(58ch, calc(100% - 176px)); }
@@ -683,7 +680,134 @@
   rotate: 180deg;
 }
 
-/* Music: a record to fling and a paper harmonium to actually play. */
+/* Music: a turntable, a crate of sleeves, and liner notes. */
+[data-chapter="music"] .sheet-column { max-width: 1680px; }
+.music-floor {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: clamp(24px, 3vw, 56px);
+  margin-top: clamp(20px, 3vh, 36px);
+}
+.deck-column { position: sticky; top: 6px; display: grid; gap: 18px; min-width: 0; }
+@media (max-height: 820px) { .deck-column { position: static; } }
+.deck { position: relative; isolation: isolate; padding: clamp(18px, 1.7vw, 30px); color: #f6efdf; }
+.deck-paper { --torn-fibre: #fffaf0; --torn-face: #29435b; z-index: -1; filter: drop-shadow(0 6px 12px #2c211255); }
+.deck-plate { position: relative; aspect-ratio: 1 / 0.9; }
+.deck-disc {
+  position: absolute;
+  left: 0;
+  top: 2%;
+  width: 84%;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 50%;
+  /* Clips the spinning square inside, whose corners would otherwise widen the page. */
+  overflow: hidden;
+  box-shadow: 0 8px 18px #0d0a0680, 0 0 0 5px #1b2d3f;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.deck-disc:active { cursor: grabbing; }
+.deck-disc:focus-visible { outline: 3px solid #f6efdf; outline-offset: 6px; }
+.deck-platter {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    conic-gradient(from 20deg, #ffffff14, transparent 18%, #ffffff10 36%, transparent 52%, #ffffff14 70%, transparent 86%, #ffffff14),
+    repeating-radial-gradient(circle, #1f1b17 0 2px, #2d2823 2px 4px);
+}
+.deck-label::after { content: ""; position: absolute; left: 50%; top: 50%; width: 9%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: #f6efdf; box-shadow: 0 0 0 1px #2c211266; }
+.deck-label { position: relative; display: block; width: 40%; aspect-ratio: 1; overflow: hidden; border-radius: 50%; background: var(--sleeve-stock, #c9663f); box-shadow: 0 0 0 3px #f6efdf; pointer-events: none; }
+.deck-label img { width: 100%; height: 100%; object-fit: cover; }
+.deck-label-land { animation: deal-slap 340ms cubic-bezier(0.34, 1.7, 0.64, 1); }
+.deck-arm {
+  position: absolute;
+  right: 1%;
+  top: 0;
+  width: 11%;
+  height: 76%;
+  transform-origin: 50% 7%;
+  rotate: var(--arm, 0deg);
+  transition: rotate 620ms var(--spring);
+  filter: drop-shadow(0 5px 5px #0d0a0680);
+  pointer-events: none;
+}
+.deck-arm svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.deck-now { margin-top: 12px; min-height: 104px; }
+.deck-rank { font: 400 17px/1.2 var(--cy-font-hand); opacity: 0.9; }
+.deck-title { font-family: var(--cy-font-name); font-size: clamp(21px, 1.9vw, 34px); font-weight: 600; line-height: 1.12; }
+.deck-by { margin-top: 3px; font-size: clamp(14px, 1vw, 17px); line-height: 1.35; opacity: 0.92; }
+.deck-progress { height: 8px; margin-top: 12px; overflow: hidden; border-radius: 2px; background: #f6efdf30; rotate: -0.3deg; }
+.deck-progress span { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(var(--progress, 0)); background: #e2b04a; transition: transform 260ms linear; }
+.deck-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.deck-button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #f6efdf; color: #29435b; transition: scale 220ms var(--spring), rotate 220ms var(--spring); }
+.deck-button:hover { scale: 1.1; rotate: -6deg; }
+.deck-button:active { scale: 0.92; }
+.deck-button:disabled { opacity: 0.45; cursor: not-allowed; scale: 1; rotate: 0deg; }
+.deck-play { width: 58px; height: 58px; background: #c9663f; color: #fff4e0; }
+.deck-surprise { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 2px 15px 0 12px; border-radius: 22px; background: #f6efdf; color: #29435b; font: 400 18px/1 var(--cy-font-hand); transition: scale 220ms var(--spring), rotate 220ms var(--spring); }
+.deck-surprise:hover { scale: 1.06; rotate: 1.5deg; }
+.deck :is(.deck-button, .deck-surprise, a):focus-visible { outline: 3px solid #e2b04a; outline-offset: 2px; }
+.deck-volume { flex: 1; min-width: 130px; }
+.deck-links { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 10px; font-size: 14px; line-height: 1.4; }
+.deck-links a { display: inline-flex; align-items: center; min-height: 32px; text-decoration: underline; text-decoration-color: #f6efdf80; text-underline-offset: 3px; }
+.deck-links a:hover { text-decoration-color: currentColor; }
+.deck-missing { margin-top: 6px; font: 400 17px/1.25 var(--cy-font-hand); color: #f3d68e; }
+
+.tally { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 18px; padding: 0; list-style: none; }
+.tally li { padding: 7px 14px 5px; background: var(--slip); color: var(--sheet-ink); font: 400 clamp(17px, 1.25vw, 21px)/1.15 var(--cy-font-hand); box-shadow: 0 1px 4px #2c211233; transition: rotate 260ms var(--spring); }
+.tally li:nth-child(odd) { rotate: -1.2deg; }
+.tally li:nth-child(even) { rotate: 1deg; }
+.tally li:hover { rotate: 0deg; }
+.crate { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(112px, 9.4vw, 170px), 1fr)); gap: clamp(20px, 1.8vw, 30px) clamp(12px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
+.sleeve { position: relative; display: block; width: 100%; color: var(--sheet-ink); text-align: left; }
+.sleeve:focus-visible { outline: 3px solid var(--card-accent); outline-offset: 4px; border-radius: 3px; }
+.sleeve-art { position: relative; display: block; aspect-ratio: 1; isolation: isolate; rotate: var(--sleeve-tilt, 0deg); transition: rotate 300ms var(--spring), translate 300ms var(--spring); }
+.sleeve-disc {
+  position: absolute;
+  z-index: -1;
+  inset: 3%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--sleeve-stock, #c9663f) 0 17%, #1f1b17 18% 19%, transparent 20%),
+    repeating-radial-gradient(circle, #1f1b17 0 2px, #2d2823 2px 4px);
+  transition: translate 340ms cubic-bezier(0.34, 1.7, 0.64, 1);
+}
+.sleeve-cover { position: absolute; inset: 0; display: grid; overflow: hidden; align-items: end; border-radius: 2px; background: var(--sleeve-stock, #c9663f); color: var(--sleeve-ink, #fff4e0); box-shadow: 0 2px 5px #2c211244; font-family: var(--cy-font-name); font-size: clamp(14px, 1.15vw, 20px); font-weight: 600; line-height: 1.1; }
+.sleeve-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sleeve-cover > span { padding: 10px; }
+.sleeve-rank { position: absolute; z-index: 2; left: -5px; top: -6px; min-width: 28px; padding: 3px 5px 1px; background: #fbf5e6; color: #2f2a20; font: 400 15px/1.1 var(--cy-font-hand); text-align: center; rotate: -6deg; box-shadow: 0 1px 3px #2c211255; }
+.sleeve-playing { position: absolute; z-index: 2; right: -4px; bottom: -5px; padding: 3px 7px 1px; background: #c9663f; color: #fff4e0; font: 400 15px/1.1 var(--cy-font-hand); rotate: 4deg; }
+.sleeve-title { display: block; margin-top: 8px; font-size: clamp(13.5px, 0.95vw, 16px); font-weight: 600; line-height: 1.22; overflow-wrap: anywhere; }
+.sleeve-by { display: block; margin-top: 1px; color: var(--sheet-soft); font-size: clamp(12.5px, 0.85vw, 14.5px); line-height: 1.25; }
+.sleeve-explicit { display: inline-block; margin-right: 4px; padding: 0 3px; border-radius: 2px; background: #5c544433; font-size: 0.8em; font-weight: 600; }
+.sleeve[aria-current="true"] .sleeve-disc { translate: 0 -24%; }
+.sleeve[aria-current="true"] .sleeve-art { translate: 0 8%; }
+.sleeve[aria-current="true"] .sleeve-title { margin-top: calc(8px + 9%); }
+@media (hover: hover) and (pointer: fine) {
+  .sleeve:hover .sleeve-art { rotate: calc(var(--sleeve-tilt, 0deg) * -1.5); translate: 0 6%; }
+  .sleeve:hover .sleeve-disc { translate: 0 -20%; }
+}
+.crate-credit { margin-top: 16px; color: var(--sheet-soft); font-size: 13.5px; line-height: 1.45; }
+.crate-credit a { text-decoration: underline; text-underline-offset: 3px; }
+.liner { position: relative; isolation: isolate; padding: 20px 22px 18px; color: var(--sheet-ink); }
+.liner-paper { --torn-face: var(--slip); z-index: -1; }
+.liner-heading { font-family: var(--cy-font-name); font-size: clamp(18px, 1.4vw, 24px); font-weight: 600; line-height: 1.2; }
+.liner p { margin-top: 6px; color: var(--sheet-soft); font-size: clamp(14.5px, 1vw, 17px); line-height: 1.5; }
+.liner-play { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; margin-top: 8px; padding: 2px 14px 0 10px; border-radius: 20px; background: var(--card-accent); color: #f6efdf; font: 400 17px/1 var(--cy-font-hand); transition: scale 220ms var(--spring); }
+.liner-play:hover { scale: 1.05; }
+.liner-play:focus-visible { outline: 3px solid var(--card-accent); outline-offset: 2px; }
+.liners { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; margin-top: 24px; }
+.outside { grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); margin-top: 4px; }
+.detail-link { display: flex; align-items: center; gap: 4px; width: fit-content; min-height: 44px; margin-top: 8px; font: 400 clamp(18px, 1.3vw, 22px)/1.2 var(--cy-font-hand); text-decoration: underline; text-underline-offset: 4px; }
+.detail-link:focus-visible { outline: 3px solid var(--entry-ink); outline-offset: 2px; }
+
+/* The paper harmonium, with a record to fling. */
 .harmonium { display: grid; grid-template-columns: 228px minmax(0, 1fr); gap: 20px clamp(20px, 3vw, 44px); align-items: end; margin-top: clamp(18px, 3vh, 32px); }
 .vinyl { display: grid; gap: 12px; justify-items: center; }
 .vinyl-disc {
@@ -799,33 +923,7 @@
   box-shadow: 0 1px 3px #2c211238;
 }
 
-/* Real Music and Inspiration entries, once they exist. */
-.crate { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px; margin: 22px 0 0; padding: 0; list-style: none; }
-.sleeve {
-  position: relative;
-  isolation: isolate;
-  min-height: 130px;
-  padding: 16px;
-  background: var(--slip);
-  box-shadow: 0 1px 3px #2c211230;
-  overflow: hidden;
-}
-.sleeve-disc {
-  position: absolute;
-  z-index: -1;
-  top: 50%;
-  right: -26%;
-  width: 58%;
-  aspect-ratio: 1;
-  translate: 0 -50%;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--card-stock) 0 15%, #1f1b17 16% 17%, transparent 18%),
-    repeating-radial-gradient(circle, #1f1b17 0 3px, #2d2823 3px 5px);
-}
-.sleeve-by { max-width: 68%; color: var(--sheet-soft); }
-.sleeve-title { position: relative; max-width: 68%; font-family: var(--cy-font-name); font-size: 19px; font-weight: 500; line-height: 1.25; }
-.sleeve-note { max-width: 68%; margin-top: 8px; font: 400 16px/1.35 var(--cy-font-hand); }
+/* Real Inspiration entries, once they exist, and the About slips. */
 .board { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 26px 22px; margin: 26px 0 0; padding: 0; list-style: none; }
 .pin { position: relative; isolation: isolate; min-height: 130px; padding: 24px 20px 20px; }
 .slip-paper { --torn-face: var(--slip); z-index: -1; }
@@ -931,6 +1029,9 @@
   [data-chapter="inspiration"] .sheet-column { display: block; }
   /* Notes capture touch for dragging, so leave a gutter the page can scroll by. */
   .shred-wrap { width: calc(100% - 48px); margin: 22px 0 0; }
+  .music-floor { grid-template-columns: minmax(0, 1fr); }
+  .deck-column { position: static; }
+  .crate { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 10px; }
   .harmonium { grid-template-columns: minmax(0, 1fr); }
   .harmonium-keys { height: 280px; }
   .harmonium-key kbd { display: none; }
