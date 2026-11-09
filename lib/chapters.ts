@@ -166,9 +166,9 @@ export const projects: Project[] = [
   {
     name: "Gift card converter",
     home: "7Brew Coffee",
-    summary: "A web app that moves gift card balances from one system to another, so a card bought under the old one still works.",
+    summary: "A web app that moves gift card balances from Paytronix to Touchpoint.",
     stats: [{ value: "$150,000+", label: "converted in its first four months", count: { to: 150000, prefix: "$", suffix: "+", separator: "," } }],
-    points: ["Converts Paytronix gift cards to Touchpoint.", "Deployed in stores nationwide."],
+    points: ["Deployed in stores nationwide.", "Converted $150,000+ in its first four months."],
   },
   {
     name: "Oral cancer lesion pipeline",
