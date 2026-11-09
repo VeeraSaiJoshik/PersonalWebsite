@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Deal, Figures, prefersReducedMotion, stockVars, Tools, TornBacking } from "./chapter-bits";
 import ClickSpark from "./click-spark";
 import FoldText from "./fold-text";
@@ -81,6 +81,11 @@ function DetailPage({ entry, index, total, next, onNext }: {
           )}
           <Dialog.Description className="detail-summary">{entry.summary}</Dialog.Description>
           <Tools tools={entry.tools} />
+          {entry.links?.map(link => (
+            <a className="detail-link" href={link.href} target="_blank" rel="noreferrer" key={link.href}>
+              {link.label}<ArrowUpRight aria-hidden="true" size={18} strokeWidth={1.75} />
+            </a>
+          ))}
         </div>
         <Plate plate={entry.hero} className="detail-hero-plate" eager />
       </div>

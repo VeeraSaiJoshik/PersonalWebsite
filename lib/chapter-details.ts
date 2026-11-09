@@ -1,8 +1,10 @@
 // The full-screen pages behind each project and job.
 //
 // Names, numbers, dates and the bullet points come straight from `lib/chapters.ts`,
-// which comes from the resume. Everything marked `placeholder: true` is filler
-// that shows a visible "placeholder" tag on the page:
+// which comes from the resume. Stories made with `told` are from Jo's college
+// application, trimmed. Nothing private from it belongs here: not health, immigration
+// status, recommenders, or students by name. Everything marked `placeholder: true`
+// is filler that shows a visible "placeholder" tag on the page:
 //   - To use a real image, put it in `public/images/` and replace the plate with
 //     { src, alt, caption } and no `placeholder` flag.
 //   - To use real words, replace the story's `body` and delete its flag.
@@ -29,6 +31,7 @@ export type Entry = {
   gallery: [Plate, Plate];
   /** The first runs beside the second gallery image; the second is a slip at the end. */
   stories: [Story, Story];
+  links?: { label: string; href: string }[];
 };
 
 /** Paper-cut art made for this site. Swap each for a real screenshot or photo. */
@@ -40,8 +43,11 @@ const art = (name: string, alt: string, caption: string): Plate => ({
 });
 
 const story = (heading: string, ...body: string[]): Story => ({ heading, body, placeholder: true });
+const told = (heading: string, ...body: string[]): Story => ({ heading, body });
 
-const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "stories">> = {
+const isefLink = { label: "The project at ISEF", href: "https://isef.net/project/tmed071t-multi-model-ai-oral-cancer-early-diagnosis-system" };
+
+const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "stories" | "links">> = {
   "Restaurant floor engine": {
     slug: "floor-engine",
     hero: art("floor-plan", "a restaurant floor plan with tracked tables and a server's route", "Swap for: the live floor view"),
@@ -62,8 +68,8 @@ const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "s
       art("flier-stands", "three small drive-through stands with fliers up", "Swap for: a flier up at a real stand"),
     ],
     stories: [
-      story("The problem", "Explain what making one flier involved before this, why it needed an Adobe license, and what the legacy tool did for its $6,000 a month."),
-      story("The hard part", "The interesting bit is probably editing Illustrator files outside Adobe's apps without flattening the vectors. Say what broke first and how you got around it."),
+      told("The problem", "Every flier or poster at a 7Brew stand starts from a template made in Adobe, and the company was paying $6,000 a month for a tool to turn those into finished materials. The goal was to replace it with something stand owners could use without an Adobe license."),
+      told("The hard part", "Editing Adobe files outside Adobe's apps is hard enough that software companies license engines for it at $4,000 to $6,000. I wrote a PDF editing engine from scratch instead, and it keeps the vector graphics intact. I also designed the UI, built the backend, and handled the architecture and security."),
     ],
   },
   "Gift card converter": {
@@ -74,11 +80,11 @@ const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "s
       art("gift-growth", "bars and coin stacks climbing over time", "Swap for: the real conversion numbers over those four months"),
     ],
     stories: [
+      told("What I built", "I led development of the whole app, from the UI to the database architecture to the backend. It converts gift cards from one format to another, and it's deployed nationally across 7Brew's stands."),
       story("The problem", "Describe why cards needed to move from Paytronix to Touchpoint at all, and what a customer holding an old card ran into at the window."),
-      story("Going nationwide", "A note on rolling this out across stores: what you tested first, and what you would only learn once real balances were moving."),
     ],
   },
-  "Oral cancer lesion pipeline": {
+  "OralScan": {
     slug: "lesion-pipeline",
     hero: art("lesion-scan", "an abstract scan with one region boxed", "Swap for: a figure from the paper or poster"),
     gallery: [
@@ -86,9 +92,10 @@ const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "s
       art("lesion-stages", "a confusion matrix beside staged results", "Swap for: the real results figure"),
     ],
     stories: [
-      story("The problem", "Why are intraoral images so noisy, why does that make lesions hard to find, and who would use this if it worked?"),
-      story("How the stages fit together", "Sketch the pipeline in plain words: what the first stage finds, what the next stage decides, and what the annotated dataset made possible."),
+      told("Why I built it", "A small bump in my grandfather's mouth threw our home into disarray. Five weeks and three doctors later, we finally got good news: it wasn't cancer. Later that year, after 500 cold emails, I joined the University of Arkansas Computer Vision Lab. I spent the next year devouring research papers, burning Colab credits, and coding late into the night, trying to build the accessible diagnosis tool he had needed."),
+      told("From model to app", "I led a team of 3 students to build OralScan, a mobile app that houses the model. We showed it to the Arkansas Dental Board and to Samsung's Head of Medical Research, and it placed 3rd in Translational Medical Sciences at ISEF. More than the numbers, it was the first time I felt the thrill of building something that truly mattered."),
     ],
+    links: [isefLink],
   },
   "Video generation orchestrator": {
     slug: "video-orchestrator",
@@ -110,8 +117,8 @@ const projectExtras: Record<string, Pick<Entry, "slug" | "hero" | "gallery" | "s
       art("stem-videos", "a wall of six video thumbnails", "Swap for: real thumbnails from the channel"),
     ],
     stories: [
-      story("Why it started", "How the project began, who the first students were, and what they could not get where they lived."),
-      story("One student", "A single story beats a statistic here. Pick one student or one cohort and say what changed for them."),
+      told("Why it started", "I started it with a few friends, to give students around the world the quality introduction to computer science I didn't have growing up in India. 115 students from 13 countries joined our first welcome call."),
+      told("What students built", "Every student leaves with a portfolio project. They come from different places, but they share a goal: using computer science to solve a problem around them. One presented an app that empowers women by sharing curated success stories. Others took on problems like food waste."),
     ],
   },
 };
@@ -129,7 +136,7 @@ const fromProject = (project: Project): Entry => ({
 
 export const projectEntries: Entry[] = projects.map(fromProject);
 
-const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gallery" | "stories">> = {
+const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gallery" | "stories" | "links">> = {
   "Shire Intelligence (YC F26)": {
     slug: "shire",
     summary: "Computer vision on CCTV footage, automating how restaurant floors run.",
@@ -165,8 +172,8 @@ const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gall
       art("flier-stands", "three small drive-through stands with fliers up", "Swap for: a photo from Springdale or a stand"),
     ],
     stories: [
-      story("What the job was", "Who you worked with, how the two summers differed, and how much of this was yours to decide."),
-      story("What I've learned", "What shipping to 450+ real stores taught you that a class or a side project would not."),
+      told("What the job was", "I worked on a software team of 10 engineers and built two full-stack apps end to end: one that converts gift cards, and one that lets the marketing team generate personalized fliers from Adobe templates."),
+      told("The side quest", "I also created a drink flavor that's now on 7Brew's national menu."),
     ],
   },
   "University of Arkansas Computer Vision Lab": {
@@ -178,9 +185,10 @@ const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gall
       art("video-ribbon", "an award rosette", "Swap for: a photo of the Samsung presentation"),
     ],
     stories: [
-      story("How it started", "How a high schooler ended up leading this, and what working across three universities was like."),
-      story("What I've learned", "Something the research taught you about computer vision, or about being wrong for months at a time."),
+      told("How it started", "After my grandfather's cancer scare, I sent 500 cold emails looking for a lab that would take me. I ended up at the University of Arkansas working under Dr. Michael Gashler, building a multi-stage, multi-modal architecture to locate, diagnose, and stage oral cancer lesions."),
+      told("What came after", "The Samsung Solve for Tomorrow win took me to Washington, DC to present the work to a panel of judges. Samsung's prize also brought technology to my school district, and I served on the board that decided where it went, helping close the gap some of our elementary and middle schools faced."),
     ],
+    links: [isefLink],
   },
   "My STEM Project": {
     slug: "my-stem",
@@ -191,8 +199,8 @@ const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gall
       art("stem-laptop", "a laptop showing code beside a notebook and pencil", "Swap for: a screenshot from a lesson"),
     ],
     stories: [
-      story("Why it started", "Why you and your co-founder started this, and who it was for."),
-      story("Running it", "What raising $25,000 and running three cohorts actually involved, including the parts that did not work."),
+      told("Why it started", "I started it with a few friends, to give students around the world the quality introduction to computer science I didn't have growing up in India. 115 students from 13 countries joined our first welcome call."),
+      told("Running it", "We ran three summers of bootcamps where students learned to program and built a portfolio project, plus weekly classes to go over the material and answer questions. The videos cover C++, Python, and Java."),
     ],
   },
   "Bentonville Schools CTE Program": {
@@ -204,8 +212,8 @@ const roleExtras: Record<string, Pick<Entry, "slug" | "summary" | "hero" | "gall
       art("cte-desks", "students at computers in front of a board", "Swap for: students working on an externship project"),
     ],
     stories: [
-      story("Why it needed building", "What the school offered before, and what was missing for students who wanted to build software."),
-      story("Getting it signed", "The story behind the MOU: why international and underage students were shut out of paid internships, and how the stipend system got them in."),
+      told("Why it needed building", "Many students couldn't take part in paid industry internships because of visa restrictions and limited school connections. I spoke before our school board and CTE director and proposed an MOU that would let students in pathways like computer science take paid internships through the school."),
+      told("What happened next", "It was approved and implemented. I was then invited to be the only student panelist at our school's first Industry Connection Summit, helping attract new partners, and I convinced six startups, from our local area to Silicon Valley, to interview my peers for internships."),
     ],
   },
 };

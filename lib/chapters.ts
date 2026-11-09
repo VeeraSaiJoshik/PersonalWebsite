@@ -171,7 +171,7 @@ export const projects: Project[] = [
     points: ["Deployed in stores nationwide.", "Converted $150,000+ in its first four months."],
   },
   {
-    name: "Oral cancer lesion pipeline",
+    name: "OralScan",
     home: "University of Arkansas Computer Vision Lab",
     summary: "A novel multi-modal, multi-stage pipeline that locates and diagnoses oral cancer lesions in high-noise images, built on a first-of-its-kind dataset of 6,000+ professionally annotated images.",
     stats: [

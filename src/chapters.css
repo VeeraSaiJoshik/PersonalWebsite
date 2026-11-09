@@ -608,6 +608,9 @@
 .detail-next img { flex: none; width: clamp(110px, 18vw, 320px); aspect-ratio: 3 / 2; object-fit: cover; border: 5px solid #fbf5e6; rotate: 3deg; box-shadow: 0 6px 14px #2c211255; transition: rotate 340ms var(--spring), scale 340ms var(--spring); }
 .detail-next:hover img { rotate: -2deg; scale: 1.08; }
 
+.detail-link { display: flex; align-items: center; gap: 4px; width: fit-content; min-height: 44px; margin-top: 8px; font: 400 clamp(18px, 1.3vw, 22px)/1.2 var(--cy-font-hand); text-decoration: underline; text-underline-offset: 4px; }
+.detail-link:focus-visible { outline: 3px solid var(--entry-ink); outline-offset: 2px; }
+
 /* About: name, stamp, stickers, a knockable toolkit, a ticket to tear. */
 [data-chapter="about-me"] .sheet-column { max-width: 960px; }
 [data-chapter="about-me"] .chapter-intro { max-width: min(58ch, calc(100% - 176px)); }
