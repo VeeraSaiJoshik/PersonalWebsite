@@ -81,6 +81,9 @@ export function RecordPlayer() {
   const track = allTracks[index];
   const hasPreview = !!track.preview && !failed.includes(index);
   const tally = useMemo(() => topArtists(3), []);
+  // iOS ignores element volume, and routing these previews through Web Audio instead
+  // would play silence without CORS headers. So where it can't work, there's no slider.
+  const [volumeWorks] = useState(() => { const probe = new Audio(); probe.volume = 0.5; return probe.volume !== 1; });
 
   const motion = useRef({ angle: 0, speed: 0, target: 0, dragging: false, moved: false, lastAngle: 0, startX: 0, startY: 0 });
 
@@ -246,7 +249,7 @@ export function RecordPlayer() {
               <p className="deck-rank">{track.rank ? `Number ${track.rank}` : "Bonus track"}{track.explicit ? ", clean version" : ""}</p>
               <p className="deck-title">{track.title}</p>
               <p className="deck-by">{track.by}</p>
-              {!hasPreview && <p className="deck-missing">No preview for this one. Hear it on Spotify.</p>}
+              {!hasPreview && <p className="deck-missing">No preview for this one. Find it on Spotify.</p>}
             </div>
             <div className="deck-progress" aria-hidden="true"><span style={{ "--progress": progress } as CSSProperties} /></div>
             <div className="deck-controls">
@@ -256,12 +259,14 @@ export function RecordPlayer() {
               </button>
               <button type="button" className="deck-button" aria-label="Next track" onClick={() => step(1)}><SkipForward aria-hidden="true" size={18} /></button>
               <button type="button" className="deck-surprise" onClick={surprise}><Shuffle aria-hidden="true" size={16} />Surprise me</button>
-              <div className="deck-volume">
-                <ElasticSlider value={volume} onChange={setVolume} maxValue={100} valuePosition="none" trackColor="#f6efdf40" rangeColor="#e2b04a" iconColor="#f6efdf" />
-              </div>
+              {volumeWorks && (
+                <div className="deck-volume">
+                  <ElasticSlider value={volume} onChange={setVolume} maxValue={100} valuePosition="none" trackColor="#f6efdf40" rangeColor="#e2b04a" iconColor="#f6efdf" />
+                </div>
+              )}
             </div>
             <div className="deck-links">
-              <a href={spotifyUrl(track)} target="_blank" rel="noreferrer">Full song on Spotify<ArrowUpRight aria-hidden="true" size={15} /></a>
+              <a href={spotifyUrl(track)} target="_blank" rel="noreferrer">Find it on Spotify<ArrowUpRight aria-hidden="true" size={15} /></a>
               {track.apple && <a href={track.apple} target="_blank" rel="noreferrer">Preview from Apple Music<ArrowUpRight aria-hidden="true" size={15} /></a>}
             </div>
           </div>

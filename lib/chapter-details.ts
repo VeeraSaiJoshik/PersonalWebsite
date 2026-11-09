@@ -2,9 +2,10 @@
 //
 // Names, numbers, dates and the bullet points come straight from `lib/chapters.ts`,
 // which comes from the resume. Stories made with `told` are from Jo's college
-// application, trimmed. Nothing private from it belongs here: not health, immigration
-// status, recommenders, or students by name. Everything marked `placeholder: true`
-// is filler that shows a visible "placeholder" tag on the page:
+// application, trimmed. Left out on purpose: Jo's own health and immigration status,
+// recommenders, and students by name. The OralScan and lab stories do mention a
+// grandparent's cancer scare, pending Jo's decision on making that public. Everything
+// marked `placeholder: true` is filler that shows a visible "placeholder" tag:
 //   - To use a real image, put it in `public/images/` and replace the plate with
 //     { src, alt, caption } and no `placeholder` flag.
 //   - To use real words, replace the story's `body` and delete its flag.
