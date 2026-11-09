@@ -1,7 +1,9 @@
 // Everything the chapter pages say lives here, so copy can change without
 // touching layout. All of it comes from Jo's resume. Music and Inspiration are
 // empty because the resume says nothing about them: add entries to `records`
-// and `pins` and the pages render them instead of their blank state.
+// and `pins` and the pages render them instead of their blank state. The longer
+// pages behind each project and job add their pictures and stories from
+// `lib/chapter-details.ts`.
 
 export type Stat = {
   /** Exactly what is printed once settled, e.g. "$32,000". */
@@ -164,9 +166,9 @@ export const projects: Project[] = [
   {
     name: "Gift card converter",
     home: "7Brew Coffee",
-    summary: "A web app that converts Paytronix gift cards to Touchpoint, deployed in stores nationwide.",
+    summary: "A web app that moves gift card balances from one system to another, so a card bought under the old one still works.",
     stats: [{ value: "$150,000+", label: "converted in its first four months", count: { to: 150000, prefix: "$", suffix: "+", separator: "," } }],
-    points: [],
+    points: ["Converts Paytronix gift cards to Touchpoint.", "Deployed in stores nationwide."],
   },
   {
     name: "Oral cancer lesion pipeline",
@@ -265,12 +267,12 @@ export const chapterCopy = {
   },
   projects: {
     headline: "Things I've built.",
-    intro: "Six builds, from restaurant floors to oral cancer research. Grab the top sheet and throw it.",
+    intro: "Six builds, from restaurant floors to oral cancer research. Pick one up for the whole story.",
     note: "out of the workshop",
   },
   experience: {
     headline: "Where the hours went.",
-    intro: "Six cards, dealt face up. Flip one for the story.",
+    intro: "The jobs, the research, and the things I started on the side. Open any of them for the whole story.",
     note: "the ledger so far",
   },
   inspiration: {
