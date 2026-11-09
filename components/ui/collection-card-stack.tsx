@@ -150,6 +150,8 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
     };
     const showPage = () => {
       if (abort.signal.aborted || closing) return;
+      // Settling again on a resize must not pull focus out of an open detail page.
+      const arriving = stage !== "open";
       stage = "open";
       pagePose = { fold: 0, x: 0, y: 0, tilt: 0, scale: 1, rotation: 0 };
       parkCard();
@@ -159,7 +161,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
       veil.style.opacity = "1";
       dialog.dataset.phase = "open";
       setLive(true);
-      closeButtonRef.current?.focus({ preventScroll: true });
+      if (arriving) closeButtonRef.current?.focus({ preventScroll: true });
     };
     const returnCard = () => {
       if (returned || abort.signal.aborted) return;

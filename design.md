@@ -67,7 +67,7 @@ Use one on-demand paper renderer per active grab; precompute fold geometry in a 
 
 The **Jo ID badge is deliberately modern**: neutral white/gray card, clean DM Sans type, a black woven strap, silver hardware and one small blue accent. It uses no Indian ornamental pattern. The Lanyard physics stage spans the viewport while only the projected badge receives pointer events, letting visitors drag it anywhere without covering other controls. The strap remains anchored at the top left. Use a large badge on desktop and reduce its size on short screens so it clears the greeting. Click or Enter/Space flips it; Escape resets it. Place the theme and background-motion controls together at the top right.
 
-Adapted sources: [Paper Crumple](https://reactbits.dev/micro/paper-crumple), [Holo Card](https://reactbits.dev/components/holo-card), [Lanyard](https://reactbits.dev/components/lanyard), [Tear Ticket](https://reactbits.dev/micro/tear-ticket), [Fold Text](https://reactbits.dev/text-animations/fold-text), [Count Up](https://reactbits.dev/text-animations/count-up), and [Circular Text](https://reactbits.dev/text-animations/circular-text). [Border Beam](https://libraries.dev/beam.html) and [Gooey](https://libraries.dev/gooey.html) come from libraries.dev as npm packages. Preserve source credits and `public/licenses/react-bits.md`.
+Adapted sources: [Paper Crumple](https://reactbits.dev/micro/paper-crumple), [Holo Card](https://reactbits.dev/components/holo-card), [Lanyard](https://reactbits.dev/components/lanyard), [Tear Ticket](https://reactbits.dev/micro/tear-ticket), [Fold Text](https://reactbits.dev/text-animations/fold-text), [Count Up](https://reactbits.dev/text-animations/count-up), and [Circular Text](https://reactbits.dev/text-animations/circular-text). [Gooey](https://libraries.dev/gooey.html) comes from libraries.dev as an npm package. Preserve source credits and `public/licenses/react-bits.md`.
 
 The top ornament was generated with the built-in image tool. Its original is `design-crate/generated/top-paper-toran.png`; its exact prompt and generation mode are in `design-crate/generated/top-paper-toran-prompt.txt`. The transparent WebP is 1400px wide. It shares the stationary paper's materials and palette, and enters once with the other separate scraps.
 
@@ -84,8 +84,8 @@ A chapter is a paper collage with one physical toy on it, not a formatted resume
 
 | Chapter | The toy | Source |
 | ---------- | -------------------------------------------------------------- | -------------------- |
-| Projects | A pile of torn sheets to grab and throw across the screen. Figures count up as each sheet surfaces | React Bits Stack, Count Up |
-| Experience | Six playing cards dealt onto the sheet, flipping to the story. "Flip them all" ripples through the hand | React Bits Flip Card, `border-beam` |
+| Projects | A wall of torn sheets at different sizes, each with a picture and one big number. Sheets lean toward the pointer and their neighbours make room. Clicking one opens its full-screen page | React Bits Count Up, Fold Text, Click Spark |
+| Experience | Torn strips in a ledger, grouped into Now, Before and Alongside. A picture tucked into each strip pops out under the pointer. Clicking one opens its full-screen page | React Bits Count Up, Fold Text, Click Spark |
 | About Me | Peelable award stickers that can go anywhere on the page, a name that swells under the cursor, a spinning stamp to fling, a toolkit that collapses into a pile you can throw, and a ticket to tear | React Bits Sticker Peel, Variable Proximity, Circular Text, Falling Text, Tear Ticket |
 | Music | A playable paper harmonium with Telugu swaras (click, glide, or A to K) and a record to fling | Web Audio, React Bits Circular Text, Elastic Slider |
 | Inspiration | A working shredder fed with joke placeholder notes, and a trail of art scraps following the cursor | React Bits Shredder, Image Trail |
@@ -97,7 +97,9 @@ A chapter is a paper collage with one physical toy on it, not a formatted resume
 
 **WebGL:** at most about 12 contexts are live, on About Me with its three stickers, under Chrome's limit of 16. Chapter code is a separate chunk, preloaded 1.5 seconds after load or on card hover.
 
-**Accessibility:** the Stack takes arrow keys, Flip Cards and the Tear Ticket stub are focusable and respond to Enter or Space, the harmonium keys are buttons, and shredder notes are focusable. Sticker and toolkit content is also available as text. Reduced motion removes the entrance animations.
+**Full-screen pages:** a project or job grows out of the sheet that was clicked, with its picture flying into place. The page has a hero, a torn band of big numbers, the facts, and pictures that crumple when held. Next and previous page through the set, by button or arrow key. It is a nested dialog, so Escape returns to the chapter rather than closing it, and focus returns to the sheet for whichever entry was showing. Real facts live in `lib/chapters.ts`. Filler in `lib/chapter-details.ts` carries a visible placeholder tag, so unconfirmed text and stand-in art can't pass as the real thing.
+
+**Accessibility:** project sheets, job strips and the Tear Ticket stub are focusable and respond to Enter or Space, the harmonium keys are buttons, and shredder notes are focusable. Sticker and toolkit content is also available as text. Reduced motion removes the entrance animations.
 
 ## Responsive behavior
 

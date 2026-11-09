@@ -1,28 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type RefObject } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { BorderBeam } from "border-beam";
 import { Liquid } from "liquid-gooey";
 import CircularText from "./circular-text";
 import ClickSpark from "./click-spark";
-import CountUp from "./count-up";
 import FallingText from "./falling-text";
-import FlipCard from "./flip-card";
 import FoldText from "./fold-text";
 import ImageTrail from "./image-trail";
 import Magnet from "./magnet";
 import { PaperHarmonium } from "./paper-harmonium";
 import { PaperImage } from "./paper-play";
 import Shredder from "./shredder";
-import Stack from "./stack";
 import StickerPeel from "./sticker-peel";
 import TearTicket from "./tear-ticket";
 import VariableProximity from "./variable-proximity";
-import { tornClip } from "@/lib/paper/torn-edge";
-import { about, alongside, before, chapterCopy, contact, now, pins, placeholders, projects, records, type ChapterId, type Role, type Stat } from "@/lib/chapters";
-
-const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+import { Deal, EntryFigure, stockVars, tilt, TornBacking } from "./chapter-bits";
+import { useEntryDetail } from "./entry-detail";
+import { projectEntries, roleEntries, roleGroups } from "@/lib/chapter-details";
+import { about, chapterCopy, contact, pins, placeholders, records, type ChapterId } from "@/lib/chapters";
 
 const subscribeToNarrow = (update: () => void) => {
   const media = window.matchMedia("(max-width: 760px)");
@@ -32,83 +28,9 @@ const subscribeToNarrow = (update: () => void) => {
 const getNarrow = () => window.matchMedia("(max-width: 760px)").matches;
 const useNarrow = () => useSyncExternalStore(subscribeToNarrow, getNarrow, () => false);
 
-const subscribeToLarge = (update: () => void) => {
-  const media = window.matchMedia("(min-width: 1700px)");
-  media.addEventListener("change", update);
-  return () => media.removeEventListener("change", update);
-};
-const getLarge = () => window.matchMedia("(min-width: 1700px)").matches;
-
 const paperConfetti = ["#c9663f", "#e2b04a", "#29435b", "#8b4a5e", "#5c7a52"];
 
-function TornBacking({ seed, depth = 5, across, down, className = "" }: {
-  seed: number;
-  depth?: number;
-  across?: number;
-  down?: number;
-  className?: string;
-}) {
-  const [face, fibre] = useMemo(() => [
-    tornClip(seed, depth, across, down),
-    tornClip(seed + 91, depth * 0.45, across, down),
-  ], [seed, depth, across, down]);
-  return (
-    <span className={`torn ${className}`} aria-hidden="true">
-      <span className="torn-fibre" style={{ clipPath: fibre }} />
-      <span className="torn-face" style={{ clipPath: face }} />
-    </span>
-  );
-}
-
-/** Lands a piece on the sheet after the paper flattens, and sweeps it off on close. */
-function Deal({ order = 0, kind = "drop", className = "", children }: { order?: number; kind?: "drop" | "slap" | "slide"; className?: string; children: ReactNode }) {
-  return (
-    <div className={`deal deal-${kind} ${className}`} style={{ "--deal-order": order } as CSSProperties}>
-      {children}
-    </div>
-  );
-}
-
-function Figure({ stat, play = true, delay = 0 }: { stat: Stat; play?: boolean; delay?: number }) {
-  const [reduced] = useState(prefersReducedMotion);
-  return (
-    <div className="figure">
-      <dt className="figure-label">{stat.label}</dt>
-      <dd className="figure-value">
-        <span className="figure-ghost">{stat.value}</span>
-        {play && !reduced && stat.count && (
-          <span className="figure-count">
-            <CountUp
-              to={stat.count.to}
-              prefix={stat.count.prefix}
-              suffix={stat.count.suffix}
-              separator={stat.count.separator}
-              duration={1.1}
-              delay={delay}
-              easing="spring"
-            />
-          </span>
-        )}
-      </dd>
-    </div>
-  );
-}
-
-function Figures({ stats, play, delay }: { stats?: Stat[]; play?: boolean; delay?: number }) {
-  if (!stats?.length) return null;
-  return <dl className="figures">{stats.map(stat => <Figure key={stat.label} stat={stat} play={play} delay={delay} />)}</dl>;
-}
-
-function Tools({ tools }: { tools?: string[] }) {
-  if (!tools?.length) return null;
-  return (
-    <ul className="tools" aria-label="Tools">
-      {tools.map(tool => <li key={tool}>{tool}</li>)}
-    </ul>
-  );
-}
-
-function Headline({ text, live }: { text: string; live: boolean }) {
+export function Headline({ text, live }: { text: string; live: boolean }) {
   if (!live) return <span style={{ visibility: "hidden" }}>{text}</span>;
   return (
     <FoldText
@@ -127,171 +49,97 @@ function Headline({ text, live }: { text: string; live: boolean }) {
   );
 }
 
-// Card stocks from the landing deck, pale enough to carry body text.
-const stocks = [
-  { stock: "#ecd2c1", ink: "#5f2f21" },
-  { stock: "#e8dbb9", ink: "#4a3b22" },
-  { stock: "#d3dfe6", ink: "#233a4f" },
-  { stock: "#e6d3d6", ink: "#533a46" },
-  { stock: "#d7dfca", ink: "#35462f" },
-  { stock: "#f0e4cb", ink: "#5f2f21" },
-];
-
-// Experience: a hand of six real cards. Summary on the face, the story on the back.
-const hand: { role: Role; rank: string }[] = [
-  { role: now[0], rank: "A" },
-  { role: now[1], rank: "K" },
-  { role: before[0], rank: "Q" },
-  { role: before[1], rank: "J" },
-  { role: alongside[0], rank: "10" },
-  { role: alongside[1], rank: "9" },
-];
-
-function RoleCard({ role, rank, index, flipped, onFlip, narrow, large }: {
-  role: Role;
-  rank: string;
-  index: number;
-  flipped: boolean;
-  onFlip: (next: boolean) => void;
-  narrow: boolean;
-  large: boolean;
-}) {
-  const tone = stocks[index];
-  const style = { "--role-stock": tone.stock, "--role-ink": tone.ink } as CSSProperties;
-  return (
-    <Deal order={index} className="hand-slot">
-      <FlipCard
-        flipped={flipped}
-        onFlipChange={onFlip}
-        width={narrow ? 310 : large ? 400 : 322}
-        height={narrow ? 452 : large ? 540 : 446}
-        radius={12}
-        background={tone.stock}
-        color={tone.ink}
-        tiltMax={14}
-        hoverScale={1.04}
-        glareOpacity={0.25}
-        ariaLabel={`${role.org}. Flip for details.`}
-        front={
-          <div className="role-face" style={style}>
-            <span className="role-rank" aria-hidden="true">{rank}<small>♣</small></span>
-            <span className="role-suit" aria-hidden="true">♣</span>
-            <h3 className="role-org">{role.org}</h3>
-            <p className="role-title">{role.title}</p>
-            <p className="role-when">{role.when}</p>
-            <Figures stats={role.stats} delay={0.5 + index * 0.08} />
-            <span className="role-hint" aria-hidden="true">flip me</span>
-          </div>
-        }
-        back={
-          <div className="role-face role-back" style={style}>
-            <h3 className="role-back-title">{role.org}</h3>
-            {role.where && <p className="role-when">{role.where}</p>}
-            <ul className="role-points">
-              {role.points.map(point => <li key={point}>{point}</li>)}
-            </ul>
-            <Tools tools={role.tools} />
-          </div>
-        }
-      />
-    </Deal>
-  );
-}
-
-function ExperienceChapter() {
-  const [flipped, setFlipped] = useState<boolean[]>(() => hand.map(() => false));
-  const narrow = useNarrow();
-  const large = useSyncExternalStore(subscribeToLarge, getLarge, () => false);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
-
-  const flipAll = () => {
-    timers.current.forEach(clearTimeout);
-    const next = !flipped.every(Boolean);
-    timers.current = hand.map((_, i) => setTimeout(() => {
-      setFlipped(current => current.map((value, at) => at === i ? next : value));
-    }, i * 70));
-  };
-
+// Projects: a wall of sheets to pick up. Each one opens into its own page.
+function ProjectsChapter({ title }: { title: string }) {
+  const detail = useEntryDetail(projectEntries, title);
   return (
     <>
-      <Deal order={0} kind="slide" className="hand-actions">
-        <BorderBeam size="sm" colorVariant="sunset" theme="dark" strength={1} duration={4} className="flip-all-beam">
-          <button type="button" className="flip-all" onClick={flipAll}>
-            {flipped.every(Boolean) ? "Flip them back" : "Flip them all"}
-          </button>
-        </BorderBeam>
-      </Deal>
-      <div className="hand">
-        {hand.map(({ role, rank }, i) => (
-          <RoleCard
-            key={role.org}
-            role={role}
-            rank={rank}
-            index={i}
-            narrow={narrow}
-            large={large}
-            flipped={flipped[i]}
-            onFlip={next => setFlipped(current => current.map((value, at) => at === i ? next : value))}
-          />
+      <ul className="wall">
+        {projectEntries.map((entry, i) => (
+          <li className="wall-slot" key={entry.slug}>
+            <Deal order={1 + i} className="wall-deal">
+              <button
+                type="button"
+                className="wall-sheet"
+                data-entry={entry.slug}
+                aria-haspopup="dialog"
+                aria-label={`${entry.name}, ${entry.home}. Open the full story.`}
+                style={stockVars(i)}
+                onClick={() => detail.open(i)}
+                {...tilt}
+              >
+                <TornBacking seed={131 + i * 29} depth={6} across={44} down={30} className="entry-paper" />
+                <span className="tape" aria-hidden="true" />
+                <span className="wall-plate">
+                  <img src={entry.hero.src} alt="" width="1500" height="1000" loading="lazy" decoding="async" draggable="false" />
+                  <span className="wall-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                </span>
+                <span className="wall-text">
+                  <span className="wall-copy">
+                    <span className="wall-home">{entry.home}</span>
+                    <span className="wall-name">{entry.name}</span>
+                  </span>
+                  {entry.stats?.[0] && <EntryFigure stat={entry.stats[0]} delay={0.5 + i * 0.08} />}
+                </span>
+                <span className="entry-stamp" aria-hidden="true">open me</span>
+              </button>
+            </Deal>
+          </li>
         ))}
-      </div>
+      </ul>
+      {detail.node}
     </>
   );
 }
 
-// Projects: a pile of torn sheets. The top one gets thrown; the figures on the
-// next one count up as it surfaces.
-function ProjectsChapter() {
-  const [top, setTop] = useState(0);
-  const sheets = useMemo(() => projects.map((project, i) => ({ project, i, clip: tornClip(131 + i * 29, 6, 44, 30) })), []);
+// Experience: torn strips in a ledger, each with a picture tucked into it that
+// pops out under the pointer.
+function ExperienceChapter({ title }: { title: string }) {
+  const detail = useEntryDetail(roleEntries, title);
+  let order = 0;
   return (
-    <div className="throw">
-      <Deal order={2} kind="slap" className="throw-stack">
-        <Stack
-          layout="pile"
-          spread={0.7}
-          visible={5}
-          radius={2}
-          shadow={false}
-          tilt={24}
-          threshold={70}
-          onChange={setTop}
-          cards={sheets.map(({ project, i, clip }) => (
-            <article
-              key={project.name}
-              className="project-sheet"
-              style={{ "--pile-stock": stocks[i].stock, "--pile-ink": stocks[i].ink, clipPath: clip } as CSSProperties}
-            >
-              <header className="project-head">
-                <span className="project-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                <span className="project-home">{project.home}</span>
-              </header>
-              <h3 className="project-name">{project.name}</h3>
-              <p className="project-summary">{project.summary}</p>
-              <Figures key={top === i ? "top" : "under"} stats={project.stats} play={top === i} />
-              {project.points.length > 0 && (
-                <ul className="project-points">
-                  {project.points.map(point => <li key={point}>{point}</li>)}
-                </ul>
-              )}
-              <Tools tools={project.tools} />
-            </article>
-          ))}
-        />
-      </Deal>
-      <Deal order={4} kind="slide" className="throw-index">
-        <p className="throw-count" aria-live="polite">
-          <span>{String(top + 1).padStart(2, "0")}</span> of {String(projects.length).padStart(2, "0")}
-        </p>
-        <ol className="throw-tabs" aria-hidden="true">
-          {projects.map((project, i) => (
-            <li key={project.name} data-current={top === i || undefined}>{project.name}</li>
-          ))}
-        </ol>
-        <p className="throw-keys">Keyboard: focus the pile and press an arrow key.</p>
-      </Deal>
-    </div>
+    <>
+      {roleGroups.map(group => (
+        <section className="strip-group" key={group.label}>
+          <Deal order={order++} kind="slide">
+            <h3 className="section-title">{group.label}<span className="section-hint">{group.hint}</span></h3>
+          </Deal>
+          <ul className="strips">
+            {group.entries.map(entry => {
+              const i = roleEntries.indexOf(entry);
+              return (
+                <li className="strip-slot" key={entry.slug}>
+                  <Deal order={order++} kind="slide">
+                    <button
+                      type="button"
+                      className="strip"
+                      data-entry={entry.slug}
+                      aria-haspopup="dialog"
+                      aria-label={`${entry.name}, ${entry.home}, ${entry.when}. Open the full story.`}
+                      style={stockVars(i)}
+                      onClick={() => detail.open(i)}
+                    >
+                      <TornBacking seed={301 + i * 17} depth={5} across={70} down={12} className="entry-paper" />
+                      <span className="strip-plate">
+                        <img src={entry.hero.src} alt="" width="1500" height="1000" loading="lazy" decoding="async" draggable="false" />
+                      </span>
+                      <span className="strip-copy">
+                        <span className="strip-when">{entry.when}</span>
+                        <span className="strip-name">{entry.name}</span>
+                        <span className="strip-role">{entry.home}</span>
+                      </span>
+                      {entry.stats?.[0] && <EntryFigure stat={entry.stats[0]} delay={0.5 + i * 0.08} />}
+                      <span className="entry-stamp" aria-hidden="true">open me</span>
+                    </button>
+                  </Deal>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      {detail.node}
+    </>
   );
 }
 
@@ -616,11 +464,11 @@ function InkLinks({ ink, paper }: { ink: string; paper: string }) {
   );
 }
 
-function ChapterBody({ id }: { id: ChapterId }) {
+function ChapterBody({ id, title }: { id: ChapterId; title: string }) {
   switch (id) {
     case "music": return <MusicChapter />;
-    case "projects": return <ProjectsChapter />;
-    case "experience": return <ExperienceChapter />;
+    case "projects": return <ProjectsChapter title={title} />;
+    case "experience": return <ExperienceChapter title={title} />;
     case "inspiration": return <InspirationChapter />;
     case "about-me": return <AboutChapter />;
   }
@@ -693,7 +541,7 @@ export function ChapterFace({ card, index, live }: {
                   <p className="chapter-intro">{copy.intro}</p>
                 </Dialog.Description>
               </header>
-              {live && <ChapterBody id={card.id} />}
+              {live && <ChapterBody id={card.id} title={card.title} />}
             </div>
           </div>
         </div>
