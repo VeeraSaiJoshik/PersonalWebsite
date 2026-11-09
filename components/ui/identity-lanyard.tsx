@@ -14,7 +14,7 @@ function identityArtwork() {
     ctx.fillStyle = gradient; ctx.fillRect(80, 260, 840, 740);
     ctx.fillStyle = "#17191c"; ctx.font = '700 430px "DM Sans"'; ctx.textAlign = "center"; ctx.fillText("jo", 470, 790);
     ctx.textAlign = "left"; ctx.font = '600 86px "DM Sans"'; ctx.fillText("Jo", 80, 1125);
-    ctx.fillStyle = "#686b72"; ctx.font = '400 35px "DM Sans"'; ctx.fillText("Music. Projects. Ideas.", 80, 1190);
+    ctx.fillStyle = "#686b72"; ctx.font = '400 35px "DM Sans"'; ctx.fillText("Veera Sai Joshik Unnam", 80, 1190);
     ctx.fillStyle = "#17191c";
     let bx = 80;
     for (let i = 0; i < 55; i++) { const w = [3, 7, 2, 5, 9][i % 5]; ctx.fillRect(bx, 1275, w, 52); bx += w + 5; }
@@ -34,7 +34,7 @@ function identityArtwork() {
 export function IdentityLanyard({ paused }: { paused: boolean }) {
   const [faces, setFaces] = useState<{ front: string; back: string } | null>(null);
   useEffect(() => { let active = true; identityArtwork().then(value => { if (active) setFaces(value); }).catch(() => {}); return () => { active = false; }; }, []);
-  return <aside className="identity-lanyard" aria-label="Jo’s ID card. A personal collection.">
+  return <aside className="identity-lanyard" aria-label="ID card for Jo, Veera Sai Joshik Unnam.">
     <div className="identity-fallback" aria-hidden="true"><span>Jo.</span><small>A little curiosity.</small></div>
     {faces && <Suspense fallback={null}><Lanyard frontImage={faces.front} backImage={faces.back} viewport cardColor="#f7f7f5" strapColor="#151619" metal="silver" finish="glossy" size={0.54} strapLength={0.28} strapWidth={0.55} cornerRadius={0.22} damping={0.8} elasticity={0.35} breeze={0} interactive={!paused} /></Suspense>}
   </aside>;

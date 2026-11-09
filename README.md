@@ -12,11 +12,13 @@ Five tinted playing cards peek up from the bottom of a fixed, non-scrolling page
 
 Clicking a card crumples its entire face into a paper bundle and drops it below the viewport. A tightly folded page then rises from the same slot, travels to the center, and **uncrumples into the chapter** using the simulation and paper shading from [React Bits Paper Crumple](https://reactbits.dev/micro/paper-crumple). A snapshot of the real page carries its title, artwork and content through the folds, then hands off to the live accessible DOM. Closing crumples the page into a bundle that tumbles down toward its card’s slot. Once the paper falls below the viewport, the original card scoots back up. Radix keeps focus inside the chapter; Escape also works during the entrance. Reduced motion or unavailable WebGL shows the chapter directly.
 
+Each chapter is a torn paper sheet with the card's arch reduced to a small plate: a wall of project sheets and a ledger of job strips that each open into their own full-screen page, stickers to peel and tiles to knock over (About Me), a turntable, 40 record sleeves and a playable harmonium (Music), and a shredder (Inspiration). Everything lands on the page after the paper finishes unfolding. **To change any copy, edit `lib/chapters.ts`**; add people or ideas to `pins`, and Inspiration shows them. Music's tracks are in `lib/records.ts`. **The full-screen pages are in `lib/chapter-details.ts`**: anything flagged `placeholder: true`, in words or pictures, shows a visible tag until you replace it and delete the flag. Composition and reasoning are in `design.md`.
+
 Hold or drag an entire playing card, any of the three collage pieces, or the artwork inside an open chapter to crumple and move it. Release to flatten and return it to its original position. A short click still opens a card; drag gestures suppress that click and the browser’s native image/text drag preview. Standalone artwork supports holding Space/Enter and moving with arrow keys; cards use Alt+Space and arrow keys. Escape, pointer cancellation, blur and resize restore the piece. One on-demand renderer is shared between picked-up objects, and geometry is prepared in a worker.
 
 A larger, **modern Jo ID badge** hangs at the top left, with clean DM Sans typography, neutral card stock, a black strap and silver hardware. It intentionally has a different visual style from the scrapbook. The supplied [React Bits Lanyard](https://reactbits.dev/components/lanyard) uses a viewport-wide physics stage and a hit target that follows the badge, so it can be dragged anywhere without blocking the rest of the site. Click or press Enter/Space to flip it; Escape resets it. It scales down on short screens. The two small controls now sit together at the top right.
 
-React Bits source attribution is retained in the adapted files, and its license is in `public/licenses/react-bits.md`. Three.js loads in a separate chunk shared by the badge and paper interactions. If WebGL is unavailable, the original artwork, card navigation and a simple ID fallback remain visible.
+React Bits source attribution is retained in the adapted files, and its license is in `public/licenses/react-bits.md`. [liquid-gooey](https://libraries.dev/gooey.html) is an MIT-licensed npm package from libraries.dev. Fold Text and Image Trail depend on GSAP, under its [standard license](https://gsap.com/standard-license), and Falling Text depends on MIT-licensed matter-js. Three.js loads in a separate chunk shared by the badge and paper interactions. If WebGL is unavailable, the original artwork, card navigation and a simple ID fallback remain visible.
 
 ## Run locally
 
@@ -47,6 +49,11 @@ VITE_CACHE_DIR=node_modules/.vite-inspection npm run dev -- --port 5174
 | `components/ui/blob-cursor.jsx`    | React Bits liquid cursor with companion CSS and typed props                |
 | `components/ui/namaste-reveal.tsx` | English/Telugu greeting with pointer, touch, and keyboard support           |
 | `components/ui/collection-card-stack.tsx` | Five playing cards and accessible chapters with a paper-uncrumpling entrance |
+| `lib/chapters.ts` | All chapter copy, from the resume. Add Music and Inspiration entries here |
+| `components/ui/chapter-pages.tsx` | The chapter layout and each chapter's toy, loaded as a separate chunk |
+| `components/ui/paper-harmonium.tsx` | The Music chapter's playable Web Audio harmonium |
+| `lib/paper/torn-edge.ts` | Torn paper outlines as CSS polygons |
+| `src/chapters.css` | Chapter page styles |
 | `components/ui/paper-play.tsx` | Shared grab, crumple, return and native-drag suppression for artwork and whole cards |
 | `components/ui/holo-card.tsx` | Adapted React Bits holographic foil and tilt around the existing card faces |
 | `components/ui/identity-lanyard.tsx` | Modern ID design and the adapted React Bits Lanyard |
@@ -125,6 +132,8 @@ The Google Fonts families are stored locally with their SIL Open Font License te
 ## Generated scrapbook artwork
 
 The built-in `image_gen` tool generated the paper texture, warm gateway collage, indigo rosette, and top paper toran. Optimized, alpha-preserving WebP assets are in `public/images/scrapbook/`. Original PNGs and exact prompts are in `design-crate/generated/`, including `prompts.txt`. The toran prompt and mode are recorded in `design-crate/generated/top-paper-toran-prompt.txt`. Generated logo explorations are retained there for reference; the landing page uses a text-only Jo mark.
+
+The paper-cut pictures in `public/images/placeholders/` are stand-ins for real screenshots and photos on the project and job pages. They illustrate the subject of each page and are not images of the actual products.
 
 The same tool generated five full-bleed miniature worlds, optimized in `public/images/card-worlds/`. Their original PNGs and exact prompt set are retained in `design-crate/generated/card-worlds/`. The scenes use Indian architectural frames, foreground-to-horizon depth, tactile paper, and the established indigo/clay/marigold palette. Earlier isolated cutout illustrations remain archived in `design-crate/generated/cards/` and `public/images/cards/`.
 

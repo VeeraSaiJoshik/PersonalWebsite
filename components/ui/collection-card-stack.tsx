@@ -17,7 +17,17 @@ const cards = [
 ] as const;
 
 type CollectionCard = (typeof cards)[number];
-type Selection = { index: number; trigger: HTMLButtonElement; travel: HTMLDivElement };
+type ChapterModule = typeof import("./chapter-pages");
+type Selection = { index: number; trigger: HTMLButtonElement; travel: HTMLDivElement; Face: ChapterModule["ChapterFace"] };
+
+// Chapter content and its animation libraries stay out of the first load.
+let chapterModule: Promise<ChapterModule> | undefined;
+function loadChapters() {
+  return chapterModule ??= import("./chapter-pages").catch((error) => {
+    chapterModule = undefined;
+    throw error;
+  });
+}
 
 // Match the scraps' crawl: scoot, hold, sidestep, hold, then settle.
 const cardScoot: Keyframe[] = [
@@ -36,6 +46,7 @@ const paperFallDuration = 1250;
 const cardCrumpleDuration = 720;
 const paperRiseDuration = 720;
 const paperUnfoldDuration = 1050;
+const leaveDuration = 260;
 type PaperPose = { fold: number; x: number; y: number; tilt: number; scale: number; rotation: number };
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
 const smoothProgress = (value: number) => {
@@ -51,27 +62,18 @@ function subscribeToReducedMotion(update: () => void) {
 const getReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const getServerReducedMotion = () => true;
 
-function CardFace({ card, index, expanded = false }: {
-  card: CollectionCard;
-  index: number;
-  expanded?: boolean;
-}) {
+function CardFace({ card, index }: { card: CollectionCard; index: number }) {
   return (
     <>
       <span className="card-heading">
         <span className="card-rank" aria-hidden="true">
           {index + 1}<small>{card.suit}</small>
         </span>
-        {expanded ? (
-          <Dialog.Title asChild>
-            <span className="card-title" role="heading" aria-level={2}>{card.title}</span>
-          </Dialog.Title>
-        ) : <span className="card-title">{card.title}</span>}
+        <span className="card-title">{card.title}</span>
       </span>
-      <span className={`card-window${expanded ? " card-content-window" : ""}`}>
+      <span className="card-window">
         <PaperImage
-          interactive={expanded}
-          label={expanded ? `${card.title} artwork` : undefined}
+          interactive={false}
           className="card-world-art"
           src={`/images/card-worlds/${card.id}.webp`}
           alt=""
@@ -80,19 +82,6 @@ function CardFace({ card, index, expanded = false }: {
           decoding="async"
           draggable="false"
         />
-        {expanded && (
-          <span className="card-placeholder">
-            <span className="placeholder-suit" aria-hidden="true">{card.suit}</span>
-            <span className="placeholder-eyebrow">A chapter in the making</span>
-            <span className="placeholder-title" role="heading" aria-level={3}>A little more, soon.</span>
-            <Dialog.Description asChild>
-              <span className="placeholder-description">
-                This is where the {card.title.toLowerCase()} chapter will live.
-              </span>
-            </Dialog.Description>
-            <span className="placeholder-rule" aria-hidden="true" />
-          </span>
-        )}
       </span>
       <span className="card-corner" aria-hidden="true">
         {index + 1}<small>{card.suit}</small>
@@ -106,7 +95,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
   reducedMotion: boolean;
   onClose: () => void;
 }) {
-  const { index, trigger, travel } = selection;
+  const { index, trigger, travel, Face } = selection;
   const card = cards[index];
   const dialogRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -115,6 +104,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
   const cardCanvasRef = useRef<HTMLCanvasElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef(() => {});
+  const [live, setLive] = useState(false);
   const settleRef = useRef(() => {});
 
   useLayoutEffect(() => {
@@ -160,6 +150,8 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
     };
     const showPage = () => {
       if (abort.signal.aborted || closing) return;
+      // Settling again on a resize must not pull focus out of an open detail page.
+      const arriving = stage !== "open";
       stage = "open";
       pagePose = { fold: 0, x: 0, y: 0, tilt: 0, scale: 1, rotation: 0 };
       parkCard();
@@ -168,7 +160,8 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
       canvas.style.visibility = "hidden";
       veil.style.opacity = "1";
       dialog.dataset.phase = "open";
-      closeButtonRef.current?.focus({ preventScroll: true });
+      setLive(true);
+      if (arriving) closeButtonRef.current?.focus({ preventScroll: true });
     };
     const returnCard = () => {
       if (returned || abort.signal.aborted) return;
@@ -272,20 +265,29 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
       // Finish a picked-up card's drop before returning it if Escape interrupts.
       if (stage === "card-crumpling") return;
       if (!surface) { returnCard(); return; }
-      fall = {
-        elapsed: 0,
-        from: { ...pagePose },
-        veil: Number(veil.style.opacity) || 0,
-        targetX: launch.x,
-        targetY: launch.y,
-        scale: launch.scale,
-        direction: launch.direction,
+      const crumple = () => {
+        if (abort.signal.aborted) return;
+        dialog.dataset.phase = "closing";
+        fall = {
+          elapsed: 0,
+          from: { ...pagePose },
+          veil: Number(veil.style.opacity) || 0,
+          targetX: launch.x,
+          targetY: launch.y,
+          scale: launch.scale,
+          direction: launch.direction,
+        };
+        renderPage(pagePose);
+        page.style.opacity = "0";
+        canvas.style.visibility = "visible";
+        cancelAnimationFrame(frame); previous = 0;
+        frame = requestAnimationFrame(render);
       };
-      renderPage(pagePose);
-      page.style.opacity = "0";
-      canvas.style.visibility = "visible";
-      cancelAnimationFrame(frame); previous = 0;
-      frame = requestAnimationFrame(render);
+      // The texture is the empty sheet, so sweep everything off it first.
+      if (stage === "open") {
+        dialog.dataset.phase = "leaving";
+        setTimeout(crumple, leaveDuration);
+      } else crumple();
     };
     canvas.addEventListener("webglcontextlost", contextLost);
     cardCanvas.addEventListener("webglcontextlost", contextLost);
@@ -378,7 +380,7 @@ function ChapterPage({ selection, reducedMotion, onClose }: {
             className="expanded-card card-page-panel"
             style={{ "--card-accent": card.accent, "--card-stock": card.stock } as CSSProperties}
           >
-            <CardFace card={card} index={index} expanded />
+            <Face card={card} index={index} live={live} />
             <button
               ref={closeButtonRef}
               type="button"
@@ -405,6 +407,18 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
     onOpenChange?.(selection !== null);
   }, [selection, onOpenChange]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => { loadChapters().catch(() => {}); }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const openChapter = (index: number, trigger: HTMLButtonElement) => {
+    const travel = trigger.closest(".card-travel") as HTMLDivElement;
+    loadChapters()
+      .then(({ ChapterFace }) => setSelection({ index, trigger, travel, Face: ChapterFace }))
+      .catch((error) => console.warn("Chapter could not load.", error));
+  };
+
   return (
     <Dialog.Root open={selection !== null}>
       <section className="collection" aria-label="A few worlds to explore">
@@ -425,7 +439,14 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
               "--card-delay": `${index * 80}ms`,
             } as CSSProperties;
             return (
-              <li key={card.id} className="collection-slot" style={style} data-selected={selection?.index === index}>
+              <li
+                key={card.id}
+                className="collection-slot"
+                style={style}
+                data-selected={selection?.index === index}
+                onPointerEnter={() => { loadChapters().catch(() => {}); }}
+                onFocus={() => { loadChapters().catch(() => {}); }}
+              >
                 <div className="card-travel">
                   <div className="collection-lift">
                   <HoloCard className="collection-holo" style={{ width: "100%", height: "100%" }} preset="gold" intensity={0.36} edgeSparkle={0.25} glare={0.12} tiltMax={8} hoverScale={1.015} radius={11} shadow={false} idle={false} enabled={!selection}>
@@ -437,11 +458,7 @@ export function CollectionCardStack({ onOpenChange }: { onOpenChange?: (open: bo
                     aria-expanded={selection?.index === index}
                     aria-controls={selection?.index === index ? "expanded-collection-card" : undefined}
                     aria-describedby={instructionsId}
-                    onClick={(event) => setSelection({
-                      index,
-                      trigger: event.currentTarget,
-                      travel: event.currentTarget.closest(".card-travel") as HTMLDivElement,
-                    })}
+                    onClick={(event) => openChapter(index, event.currentTarget)}
                   >
                     <CardFace card={card} index={index} />
                   </PaperCard>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Moon, Pause, Play, Sun } from "lucide-react";
+import ClickSpark from "@/components/ui/click-spark";
 import { GradientWave } from "@/components/ui/gradient-wave";
+import VariableProximity from "@/components/ui/variable-proximity";
 import { NamasteReveal } from "@/components/ui/namaste-reveal";
 import { IdentityLanyard } from "@/components/ui/identity-lanyard";
 import { PaperImage, PaperPlayProvider } from "@/components/ui/paper-play";
@@ -59,6 +61,7 @@ export default function App() {
 
   return (
     <PaperPlayProvider onBusyChange={setPaperBusy}>
+    <ClickSpark sparkColor={["#c9663f", "#e2b04a", "#29435b", "#8b4a5e", "#5c7a52"]} shape="star" sparkCount={12} sparkSize={13} sparkRadius={56} gravity={0.7} randomness={0.6} duration={620}>
     <div className="jo-landing">
       <a className="skip-link" href="#hello">
         Skip to the greeting
@@ -121,13 +124,32 @@ export default function App() {
           <h1 className="hello-heading" aria-label="Namaste. I'm Jo.">
             <NamasteReveal />
             <span className="name-line">
-              <span aria-hidden="true">I'm</span>
+              <span aria-hidden="true" className="name-im">
+                <VariableProximity
+                  label="I'm"
+                  fromFontVariationSettings="'wght' 500"
+                  toFontVariationSettings="'wght' 800"
+                  radius={240}
+                  falloff="gaussian"
+                  scale={1.2}
+                  lift={0.08}
+                />
+              </span>
               <em className="jo-text" aria-hidden="true">
-                Jo.
+                <VariableProximity
+                  label="Jo."
+                  fromFontVariationSettings="'wght' 400"
+                  toFontVariationSettings="'wght' 400"
+                  radius={240}
+                  falloff="gaussian"
+                  scale={1.28}
+                  lift={0.1}
+                />
               </em>
             </span>
           </h1>
         </div>
+        <p className="landing-hint" aria-hidden="true">pick a card</p>
         <CollectionCardStack onOpenChange={setChapterOpen} />
       </main>
       <footer className="jo-footer">
@@ -170,6 +192,7 @@ export default function App() {
         </button>
       </footer>
     </div>
+    </ClickSpark>
     </PaperPlayProvider>
   );
 }
