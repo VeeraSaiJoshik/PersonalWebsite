@@ -267,10 +267,8 @@ export const pins: Pin[] = [];
 
 /** Notes for the Inspiration shredder. They come back, so it never runs dry. */
 export const placeholders = [
-  { id: 1, text: "An inspiring quote goes here" },
   { id: 2, text: "A book I'll claim to have finished" },
   { id: 3, text: "Something profound about failure" },
-  { id: 4, text: "Placeholder, honestly" },
 ];
 
 export const chapterCopy = {
@@ -291,8 +289,8 @@ export const chapterCopy = {
   },
   inspiration: {
     headline: "Pinned above the desk.",
-    intro: pins.length ? "The things that stuck." : "Nothing's pinned yet, only placeholders. Feed them to the shredder.",
-    note: pins.length ? "still adding" : "more pins soon",
+    intro: pins.length ? "The things that stuck." : "A few scraps from above the desk. Feed them to the shredder.",
+    note: "still adding",
   },
   "about-me": {
     headline: about.name,

@@ -539,16 +539,6 @@
   margin-top: 16px;
   font: 400 clamp(16px, 1.2vw, 20px)/1.25 var(--cy-font-hand);
 }
-.placeholder-tag {
-  display: inline-block;
-  padding: 2px 8px 0;
-  border: 1.5px dashed currentColor;
-  border-radius: 3px;
-  font: 400 clamp(14px, 1vw, 17px)/1.35 var(--cy-font-hand);
-  white-space: nowrap;
-  opacity: 0.85;
-  rotate: -1.5deg;
-}
 .detail-hero-plate { --plate-tilt: 1.4deg; }
 
 /* Big numbers on a torn band that runs off both edges of the page. */
@@ -579,7 +569,6 @@
 .detail-points li + li { margin-top: 0.9em; }
 .detail-points li::before { content: counter(point); position: absolute; left: 0; top: -0.1em; font: 600 1.4em/1.2 var(--cy-font-name); opacity: 0.8; }
 .detail-copy { max-width: 58ch; margin-top: clamp(12px, 1.8vh, 20px); color: var(--detail-soft); font-size: clamp(17px, 1.3vw, 23px); line-height: 1.5; }
-.detail-copy[data-placeholder] { font-style: italic; }
 
 .detail-slip { position: relative; isolation: isolate; width: min(100%, 980px); margin: clamp(52px, 9vh, 110px) auto 0; padding: clamp(28px, 3.4vw, 56px) clamp(24px, 4vw, 72px); rotate: -0.7deg; }
 .detail-slip-paper { --torn-fibre: #fffaf0; --torn-face: #fbf5e6; z-index: -1; filter: drop-shadow(0 4px 9px #2c211238); }
@@ -899,7 +888,7 @@
 .ask-note:hover { rotate: 2deg; scale: 1.05; }
 .ask-note:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 3px; }
 
-/* Inspiration: a trail of scraps across the sheet, and a shredder for the placeholders. */
+/* Inspiration: a trail of scraps across the sheet, and a shredder for the notes. */
 .trail-layer { position: absolute; inset: 0; }
 .trail-layer .image-trail { height: 100%; z-index: 0; }
 .trail-layer .image-trail__img { box-shadow: 0 3px 8px #2c211250; }

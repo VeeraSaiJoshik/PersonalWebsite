@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Deal, Figures, prefersReducedMotion, stockVars, Tools, TornBacking } from "./chapter-bits";
@@ -29,10 +29,6 @@ function flyFrom(from: DOMRect, target: DOMRect) {
   return `translate(${from.left - target.left}px, ${from.top - target.top}px) scale(${scale})`;
 }
 
-function PlaceholderTag({ children = "placeholder" }: { children?: ReactNode }) {
-  return <span className="placeholder-tag">{children}</span>;
-}
-
 function Plate({ plate, className = "", eager = false }: { plate: PlateData; className?: string; eager?: boolean }) {
   return (
     <figure className={`detail-plate ${className}`}>
@@ -41,7 +37,6 @@ function Plate({ plate, className = "", eager = false }: { plate: PlateData; cla
         <PaperImage src={plate.src} alt={plate.alt} width="1500" height="1000" loading={eager ? "eager" : "lazy"} decoding="async" />
       </span>
       <figcaption>
-        {plate.placeholder && <PlaceholderTag>placeholder art</PlaceholderTag>}
         <span>{plate.caption}</span>
       </figcaption>
     </figure>
@@ -51,11 +46,8 @@ function Plate({ plate, className = "", eager = false }: { plate: PlateData; cla
 function StoryCopy({ story }: { story: Story }) {
   return (
     <>
-      <h3 className="detail-heading">
-        {story.heading}
-        {story.placeholder && <PlaceholderTag />}
-      </h3>
-      {story.body.map(paragraph => <p className="detail-copy" data-placeholder={story.placeholder || undefined} key={paragraph}>{paragraph}</p>)}
+      <h3 className="detail-heading">{story.heading}</h3>
+      {story.body.map(paragraph => <p className="detail-copy" key={paragraph}>{paragraph}</p>)}
     </>
   );
 }
