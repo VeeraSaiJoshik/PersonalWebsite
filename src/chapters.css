@@ -569,6 +569,7 @@
 .detail-points li + li { margin-top: 0.9em; }
 .detail-points li::before { content: counter(point); position: absolute; left: 0; top: -0.1em; font: 600 1.4em/1.2 var(--cy-font-name); opacity: 0.8; }
 .detail-copy { max-width: 58ch; margin-top: clamp(12px, 1.8vh, 20px); color: var(--detail-soft); font-size: clamp(17px, 1.3vw, 23px); line-height: 1.5; }
+.detail-copy[data-placeholder] { font-style: italic; }
 
 .detail-slip { position: relative; isolation: isolate; width: min(100%, 980px); margin: clamp(52px, 9vh, 110px) auto 0; padding: clamp(28px, 3.4vw, 56px) clamp(24px, 4vw, 72px); rotate: -0.7deg; }
 .detail-slip-paper { --torn-fibre: #fffaf0; --torn-face: #fbf5e6; z-index: -1; filter: drop-shadow(0 4px 9px #2c211238); }

@@ -47,7 +47,7 @@ function StoryCopy({ story }: { story: Story }) {
   return (
     <>
       <h3 className="detail-heading">{story.heading}</h3>
-      {story.body.map(paragraph => <p className="detail-copy" key={paragraph}>{paragraph}</p>)}
+      {story.body.map(paragraph => <p className="detail-copy" data-placeholder={story.placeholder || undefined} key={paragraph}>{paragraph}</p>)}
     </>
   );
 }
