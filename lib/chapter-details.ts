@@ -5,8 +5,9 @@
 // application, trimmed. Left out on purpose: Jo's own health and immigration status,
 // recommenders, and students by name. The OralScan and lab stories do mention a
 // grandparent's cancer scare, pending Jo's decision on making that public. Everything
-// marked `placeholder: true` is filler still to be replaced. The flag is only a
-// to-do marker; nothing on the page shows it:
+// marked `placeholder: true` is still to be replaced. A placeholder story is not shown
+// at all (its text is a prompt for what to write), and a placeholder image shows
+// without its "Swap for" caption:
 //   - To use a real image, put it in `public/images/` and replace the plate with
 //     { src, alt, caption } and no `placeholder` flag.
 //   - To use real words, replace the story's `body` and delete its flag.
