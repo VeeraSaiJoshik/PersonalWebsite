@@ -520,7 +520,7 @@ export function ChapterFace({ card, index, live }: {
               draggable="false"
             />
           </div>
-          <p className="chapter-note">{copy.note}</p>
+          {copy.note && <p className="chapter-note">{copy.note}</p>}
           <InkLinks ink={card.accent} paper={card.stock} />
         </aside>
         <div className="chapter-sheet">

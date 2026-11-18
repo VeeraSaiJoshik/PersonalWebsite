@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Deal, Figures, prefersReducedMotion, stockVars, Tools, TornBacking } from "./chapter-bits";
@@ -29,10 +29,6 @@ function flyFrom(from: DOMRect, target: DOMRect) {
   return `translate(${from.left - target.left}px, ${from.top - target.top}px) scale(${scale})`;
 }
 
-function PlaceholderTag({ children = "placeholder" }: { children?: ReactNode }) {
-  return <span className="placeholder-tag">{children}</span>;
-}
-
 function Plate({ plate, className = "", eager = false }: { plate: PlateData; className?: string; eager?: boolean }) {
   return (
     <figure className={`detail-plate ${className}`}>
@@ -40,10 +36,11 @@ function Plate({ plate, className = "", eager = false }: { plate: PlateData; cla
       <span className="detail-plate-frame">
         <PaperImage src={plate.src} alt={plate.alt} width="1500" height="1000" loading={eager ? "eager" : "lazy"} decoding="async" />
       </span>
-      <figcaption>
-        {plate.placeholder && <PlaceholderTag>placeholder art</PlaceholderTag>}
-        <span>{plate.caption}</span>
-      </figcaption>
+      {!plate.placeholder && (
+        <figcaption>
+          <span>{plate.caption}</span>
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -51,11 +48,8 @@ function Plate({ plate, className = "", eager = false }: { plate: PlateData; cla
 function StoryCopy({ story }: { story: Story }) {
   return (
     <>
-      <h3 className="detail-heading">
-        {story.heading}
-        {story.placeholder && <PlaceholderTag />}
-      </h3>
-      {story.body.map(paragraph => <p className="detail-copy" data-placeholder={story.placeholder || undefined} key={paragraph}>{paragraph}</p>)}
+      <h3 className="detail-heading">{story.heading}</h3>
+      {story.body.map(paragraph => <p className="detail-copy" key={paragraph}>{paragraph}</p>)}
     </>
   );
 }
@@ -107,17 +101,19 @@ function DetailPage({ entry, index, total, next, onNext }: {
           </Deal>
           <Deal order={4} kind="slap"><Plate plate={entry.gallery[0]} /></Deal>
         </section>
-        <section className="detail-row">
-          <Deal order={3} kind="slide" className="detail-row-copy"><StoryCopy story={entry.stories[0]} /></Deal>
+        <section className={entry.stories[0].placeholder ? "detail-row detail-row-solo" : "detail-row"}>
+          {!entry.stories[0].placeholder && <Deal order={3} kind="slide" className="detail-row-copy"><StoryCopy story={entry.stories[0]} /></Deal>}
           <Deal order={4} kind="slap"><Plate plate={entry.gallery[1]} /></Deal>
         </section>
       </div>
 
-      <section className="detail-slip">
-        <TornBacking seed={entry.slug.length * 13 + 211} depth={5} across={50} down={14} className="detail-slip-paper" />
-        <span className="tape" aria-hidden="true" />
-        <StoryCopy story={entry.stories[1]} />
-      </section>
+      {!entry.stories[1].placeholder && (
+        <section className="detail-slip">
+          <TornBacking seed={entry.slug.length * 13 + 211} depth={5} across={50} down={14} className="detail-slip-paper" />
+          <span className="tape" aria-hidden="true" />
+          <StoryCopy story={entry.stories[1]} />
+        </section>
+      )}
 
       <button type="button" className="detail-next" onClick={onNext}>
         <TornBacking seed={entry.slug.length * 7 + 5} depth={7} across={70} down={18} className="detail-next-paper" />
